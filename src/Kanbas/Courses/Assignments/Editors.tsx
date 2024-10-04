@@ -25,7 +25,6 @@ export default function AssignmentEditor() {
               <input id="wd-points" value={100} />
             </td>
           </tr>
-          {/* Complete on your own */}
         </table>
         <br />
         <label htmlFor="wd-group"> Assignment Group </label>
