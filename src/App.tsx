@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import Labs from "./Labs";
+// import Labs from "./Labs";
 
 function App() {
   return (
