@@ -12,14 +12,27 @@ export default function KanbasNavigation() {
       className="list-group rounded-0 position-fixed
          bottom-0 top-0 d-none d-md-block bg-black z-2"
     >
+      <div className="d-flex justify-content-center">
+        <img src="images/neuLogo.jpg" width="60" height="50" />
+      </div>
       <a
+        className="border-0  text-center bg-black text-white list-group-item"
+        href=" "
+        id="wd-neu-link"
+        target="_blank"
+      >
+        Northeastern
+      </a>
+      {/* <a
         id="wd-neu-link"
         target="_blank"
         href="https://www.northeastern.edu/"
-        className="list-group-item bg-black border-0 text-center"
+        className="list-group-item bg-black border-0 text-white text-center"
       >
         <img src="/images/NEU.png" width="75px" />
-      </a>
+      
+      </a> */}
+
       <Link
         to="/Kanbas/Account"
         id="wd-account-link"

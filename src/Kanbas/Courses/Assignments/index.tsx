@@ -4,7 +4,19 @@ import { BsGripVertical } from "react-icons/bs";
 export default function Assignments() {
   return (
     <div id="wd-assignments">
-      <input id="wd-search-assignment" placeholder="Search for Assignments" />
+      <nav className="navbar bg-body-tertiary">
+        <div className="container-fluid">
+          <form className="d-flex" role="search">
+            <input
+              className="form-control me-2"
+              type="search"
+              placeholder="Search for Assignments"
+              aria-label="Search"
+            />
+          </form>
+        </div>
+      </nav>
+
       <AssignmentsControlButton />
       <br />
       <br />
