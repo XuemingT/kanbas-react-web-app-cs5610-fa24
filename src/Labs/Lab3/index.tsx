@@ -63,6 +63,7 @@ export default function Lab3() {
       <h4>Square of 4</h4>
       <h3>JavaScript</h3>
       <Square>4</Square>
+      <br />
       <Highlight>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipitratione
         eaque illo minus cum, saepe totam vel nihil repellat nemo explicabo
