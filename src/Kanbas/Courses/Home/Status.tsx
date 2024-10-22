@@ -12,7 +12,11 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 }
 export default function CourseStatus() {
   return (
-    <div id="wd-course-status" style={{ width: "300px" }}>
+    <div
+      className="wd list-group rounded-0 d-none d-md-block"
+      id="wd-course-status"
+      style={{ width: "300px" }}
+    >
       <h2>Course Status</h2>
       <div className="d-flex">
         <div className="w-50 pe-1">

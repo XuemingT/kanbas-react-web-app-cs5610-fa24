@@ -1,11 +1,92 @@
 [
-  { "_id": "A101", "title": "Propulsion Assignment", "course": "RS101" },
-  { "_id": "A102", "title": "Combustion Analysis", "course": "RS101" },
-  { "_id": "A103", "title": "Nozzle Design Project", "course": "RS101" },
-  { "_id": "A201", "title": "Aerodynamics Quiz", "course": "RS102" },
-  { "_id": "A202", "title": "Flow Analysis", "course": "RS102" },
-  { "_id": "A203", "title": "Heating Analysis", "course": "RS102" },
-  { "_id": "A301", "title": "Structural Design Task", "course": "RS103" },
-  { "_id": "A302", "title": "Orbital Calculations", "course": "RS103" },
-  { "_id": "A303", "title": "Systems Engineering Exam", "course": "RS103" }
+  {
+    "_id": "A101",
+    "title": "Propulsion Assignment",
+    "course": "RS101",
+    "description": "Complete the problems related to propulsion systems.",
+    "dueDate": "2024-05-06",
+    "points": 100,
+    "availableFrom": "2024-05-01",
+    "untilDate": "2024-05-20"
+  },
+  {
+    "_id": "A102",
+    "title": "Combustion Analysis",
+    "course": "RS101",
+    "description": "Analyze the combustion process for rocket engines.",
+    "dueDate": "2024-05-13",
+    "points": 100,
+    "availableFrom": "2024-05-06",
+    "untilDate": "2024-05-20"
+  },
+  {
+    "_id": "A103",
+    "title": "Nozzle Design Project",
+    "course": "RS101",
+    "description": "Design a rocket nozzle for optimized performance.",
+    "dueDate": "2024-05-20",
+    "points": 100,
+    "availableFrom": "2024-05-10",
+    "untilDate": "2024-05-25"
+  },
+  {
+    "_id": "A201",
+    "title": "Aerodynamics Quiz",
+    "course": "RS102",
+    "description": "Complete the quiz on basic aerodynamics concepts.",
+    "dueDate": "2024-05-06",
+    "points": 50,
+    "availableFrom": "2024-05-01",
+    "untilDate": "2024-05-15"
+  },
+  {
+    "_id": "A202",
+    "title": "Flow Analysis",
+    "course": "RS102",
+    "description": "Analyze the flow dynamics in subsonic and supersonic conditions.",
+    "dueDate": "2024-05-13",
+    "points": 75,
+    "availableFrom": "2024-05-06",
+    "untilDate": "2024-05-20"
+  },
+  {
+    "_id": "A203",
+    "title": "Heating Analysis",
+    "course": "RS102",
+    "description": "Conduct an analysis on aerodynamic heating.",
+    "dueDate": "2024-05-20",
+    "points": 100,
+    "availableFrom": "2024-05-10",
+    "untilDate": "2024-05-25"
+  },
+  {
+    "_id": "A301",
+    "title": "Structural Design Task",
+    "course": "RS103",
+    "description": "Design a spacecraft structure with given specifications.",
+    "dueDate": "2024-05-06",
+    "points": 150,
+    "availableFrom": "2024-05-01",
+    "untilDate": "2024-05-15"
+  },
+  {
+    "_id": "A302",
+    "title": "Orbital Calculations",
+    "course": "RS103",
+    "description": "Calculate the orbits for a satellite mission.",
+    "dueDate": "2024-05-13",
+    "points": 100,
+    "availableFrom": "2024-05-06",
+    "untilDate": "2024-05-20"
+  },
+  {
+    "_id": "A303",
+    "title": "Systems Engineering Exam",
+    "course": "RS103",
+    "description": "Complete the final exam on spacecraft systems engineering.",
+    "dueDate": "2024-05-20",
+    "points": 200,
+    "availableFrom": "2024-05-10",
+    "untilDate": "2024-05-25"
+  }
 ]
