@@ -26,6 +26,22 @@ export default function Labs() {
           code for a2
         </a>
       </h2>
+      <h2>
+        <a
+          href="https://github.com/XuemingT/kanbas-react-web-app-cs5610-fa24/tree/a3/src"
+          target="blank"
+        >
+          code for a3
+        </a>
+      </h2>
+      <h2>
+        <a
+          href="https://github.com/XuemingT/kanbas-react-web-app-cs5610-fa24/tree/a4/src"
+          target="blank"
+        >
+          code for a4
+        </a>
+      </h2>
       <TOC />
       <Routes>
         {/* <Route path="/" element={<Navigate to="Lab1" />} />{" "} */}
