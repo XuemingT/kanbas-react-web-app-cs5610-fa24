@@ -5,6 +5,7 @@ import AssignmentSearchBar from "./seachBar";
 import { BsGripVertical } from "react-icons/bs"; // Icon for drag handle
 import { FaPlus, FaBook } from "react-icons/fa"; // Book icon
 import * as db from "../../Database"; // Import the assignments data
+import FacultyOnly from "../../Account/FacultyOnly";
 
 export default function Assignments() {
   const { cid } = useParams<{ cid: string }>(); // Get the course ID from the URL
@@ -17,10 +18,12 @@ export default function Assignments() {
       {" "}
       {/* Added padding to the container */}
       <AssignmentSearchBar />
-      <button className="btn btn-lg btn-danger float-end">
-        <FaPlus className="me-2" />
-        Add Assignment
-      </button>
+      <FacultyOnly>
+        <button className="btn btn-lg btn-danger float-end">
+          <FaPlus className="me-2" />
+          Add Assignment
+        </button>
+      </FacultyOnly>
       <br />
       <br />
       <br />
