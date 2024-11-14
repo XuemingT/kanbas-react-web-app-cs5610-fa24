@@ -6,6 +6,7 @@ import ModulesControls from "./ModulesControls";
 import { BsGripVertical } from "react-icons/bs";
 import { useParams } from "react-router-dom";
 import ModuleControlButtons from "./ModuleControlButtons";
+import FacultyOnly from "../../Account/FacultyOnly";
 
 export default function Modules() {
   const { cid } = useParams();
@@ -26,11 +27,13 @@ export default function Modules() {
 
   return (
     <div className="wd-modules">
-      <ModulesControls
-        moduleName={moduleName}
-        setModuleName={setModuleName}
-        addModule={addNewModule}
-      />
+      <FacultyOnly>
+        <ModulesControls
+          moduleName={moduleName}
+          setModuleName={setModuleName}
+          addModule={addNewModule}
+        />
+      </FacultyOnly>
       <br />
       <br />
       <ul className="mt-2 list-group rounded-0">
@@ -60,11 +63,15 @@ export default function Modules() {
                     }}
                   />
                 )}
-                <ModuleControlButtons
-                  moduleId={module._id}
-                  deleteModule={(moduleId) => dispatch(deleteModule(moduleId))}
-                  editModule={(moduleId) => dispatch(editModule(moduleId))}
-                />
+                <FacultyOnly>
+                  <ModuleControlButtons
+                    moduleId={module._id}
+                    deleteModule={(moduleId) =>
+                      dispatch(deleteModule(moduleId))
+                    }
+                    editModule={(moduleId) => dispatch(editModule(moduleId))}
+                  />
+                </FacultyOnly>
               </div>
               <ul className="wd-lessons list-group rounded-0">
                 {module.lessons &&

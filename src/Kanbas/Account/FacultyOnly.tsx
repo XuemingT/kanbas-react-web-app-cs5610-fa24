@@ -10,7 +10,7 @@ interface FacultyOnlyProps {
 const FacultyOnly: React.FC<FacultyOnlyProps> = ({ children }) => {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
 
-  if (currentUser?.role === "faculty") {
+  if (currentUser?.role === "FACULTY") {
     return <>{children}</>; // Wrap children in a fragment
   }
 
