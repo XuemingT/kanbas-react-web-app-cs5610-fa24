@@ -120,18 +120,6 @@ export default function WorkingWithArraysAsynchronously() {
               className="text-danger float-end me-2 fs-3"
               id="wd-delete-todo"
             />
-            <input
-              type="checkbox"
-              className="form-check-input me-2"
-              defaultChecked={todo.completed}
-            />
-            <span
-              style={{
-                textDecoration: todo.completed ? "line-through" : "none",
-              }}
-            >
-              {todo.title}
-            </span>
           </li>
         ))}
       </ul>{" "}
