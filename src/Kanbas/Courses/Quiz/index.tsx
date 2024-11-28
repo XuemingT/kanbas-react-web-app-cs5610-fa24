@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import QuizList from "./QuizList";
 import QuizEditor from "./QuizEditor";
-import QuizDetails from "./quizDetails";
+import QuizDetails from "./QuizDetail";
 import QuizPreview from "./QuizPreview";
 
 export default function Quiz() {
