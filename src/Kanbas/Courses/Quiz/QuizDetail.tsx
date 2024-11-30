@@ -1,6 +1,16 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as db from "../../Database";
+import { format, parseISO } from 'date-fns';
+
+function formatDate(dateString: string) {
+  try {
+    const date = parseISO(dateString);
+    return format(date, "MMM d 'at' h:mm a 'UTC'");
+  } catch (error) {
+    return "Invalid Date";
+  }
+}
 
 export default function QuizDetails() {
   const navigate = useNavigate();
@@ -28,7 +38,7 @@ export default function QuizDetails() {
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>{quiz.title}</h2>
+        <h2>{quiz.title}</h2> 
         <div>
           <button className="btn btn-secondary me-2" onClick={handlePreview}>
             Preview
@@ -111,10 +121,10 @@ export default function QuizDetails() {
             </thead>
             <tbody>
               <tr>
-                <td>{quiz.dueDate}</td>
+                <td>{formatDate(quiz.dueDate)}</td>
                 <td>Everyone</td>
-                <td>{quiz.availableDate}</td>
-                <td>{quiz.untilDate}</td>
+                <td>{formatDate(quiz.availableDate)}</td>
+                <td>{formatDate(quiz.untilDate)}</td>
               </tr>
             </tbody>
           </table>

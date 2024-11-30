@@ -4,11 +4,12 @@
     "title": "Introduction to Biology Quiz",
     "description": "A basic quiz covering fundamental concepts in biology.",
     "course": "RS101",
+    "quizStatus": true,
     "quizType": "Graded Quiz",
     "points": 100,
     "assignmentGroup": "Quizzes",
     "shuffleAnswers": true,
-    "timeLimit": "20 Minutes",
+    "timeLimit": 20,
     "multipleAttempts": false,
     "howManyAttempts": 1,
     "showCorrectAnswers": "After Submission",
@@ -16,26 +17,41 @@
     "oneQuestionAtATime": true,
     "webcamRequired": false,
     "lockQuestionsAfterAnswering": false,
-    "dueDate": "2024-12-15",
-    "availableDate": "2024-11-30",
-    "untilDate": "2024-12-15",
+    "dueDate": "2025-12-29T13:00:00Z",
+    "availableDate": "2024-08-13T22:00:00Z",
+    "untilDate": "2024-12-15T00:00:00Z",
     "questions": [
       {
         "_id": "Q1011",
         "question": "What is the powerhouse of the cell?",
-        "options": ["Nucleus", "Mitochondria", "Ribosome", "Endoplasmic Reticulum"],
+        "options": [
+          "Nucleus",
+          "Mitochondria",
+          "Ribosome",
+          "Endoplasmic Reticulum"
+        ],
         "answer": "Mitochondria"
       },
       {
         "_id": "Q1012",
         "question": "Which molecule carries genetic information?",
-        "options": ["DNA", "RNA", "Proteins", "Lipids"],
+        "options": [
+          "DNA",
+          "RNA",
+          "Proteins",
+          "Lipids"
+        ],
         "answer": "DNA"
       },
       {
         "_id": "Q1013",
         "question": "What process do plants use to convert sunlight into chemical energy?",
-        "options": ["Respiration", "Photosynthesis", "Transpiration", "Fermentation"],
+        "options": [
+          "Respiration",
+          "Photosynthesis",
+          "Transpiration",
+          "Fermentation"
+        ],
         "answer": "Photosynthesis"
       }
     ]
@@ -45,11 +61,12 @@
     "title": "Algebra Practice Quiz",
     "description": "Practice problems to strengthen your algebra skills.",
     "course": "RS101",
+    "quizStatus": false,
     "quizType": "Practice Quiz",
     "points": 50,
     "assignmentGroup": "Assignments",
     "shuffleAnswers": false,
-    "timeLimit": "30 Minutes",
+    "timeLimit": 30,
     "multipleAttempts": true,
     "howManyAttempts": 3,
     "showCorrectAnswers": "Immediately",
@@ -57,26 +74,41 @@
     "oneQuestionAtATime": false,
     "webcamRequired": true,
     "lockQuestionsAfterAnswering": true,
-    "dueDate": "2024-12-20",
-    "availableDate": "2024-11-25",
-    "untilDate": "2024-12-20",
+    "dueDate": "2025-12-29T13:00:00Z",
+    "availableDate": "2024-08-13T22:00:00Z",
+    "untilDate": "2024-12-15T00:00:00Z",
     "questions": [
       {
         "_id": "Q1021",
         "question": "Solve for x: 2x + 5 = 13",
-        "options": ["x = 4", "x = 5", "x = 6", "x = 3"],
+        "options": [
+          "x = 4",
+          "x = 5",
+          "x = 6",
+          "x = 3"
+        ],
         "answer": "x = 4"
       },
       {
         "_id": "Q1022",
         "question": "What is the value of y in the equation 3y - 7 = 2?",
-        "options": ["y = 1", "y = 2", "y = 3", "y = 4"],
+        "options": [
+          "y = 1",
+          "y = 2",
+          "y = 3",
+          "y = 4"
+        ],
         "answer": "y = 3"
       },
       {
         "_id": "Q1023",
         "question": "Simplify: (x^2 - 4)/(x - 2)",
-        "options": ["x + 2", "x - 2", "x^2 - 2x + 4", "Cannot be simplified"],
+        "options": [
+          "x + 2",
+          "x - 2",
+          "x^2 - 2x + 4",
+          "Cannot be simplified"
+        ],
         "answer": "x + 2"
       }
     ]
@@ -86,11 +118,12 @@
     "title": "Fundamentals of Aerodynamics Quiz",
     "description": "Assess your understanding of basic aerodynamic principles.",
     "course": "RS102",
+    "quizStatus": true,
     "quizType": "Graded Quiz",
     "points": 80,
     "assignmentGroup": "Exams",
     "shuffleAnswers": true,
-    "timeLimit": "25 Minutes",
+    "timeLimit": 25,
     "multipleAttempts": false,
     "howManyAttempts": 1,
     "showCorrectAnswers": "After Submission",
@@ -98,26 +131,41 @@
     "oneQuestionAtATime": true,
     "webcamRequired": false,
     "lockQuestionsAfterAnswering": false,
-    "dueDate": "2024-12-18",
-    "availableDate": "2024-11-28",
-    "untilDate": "2024-12-18",
+    "dueDate": "2025-12-29T13:00:00Z",
+    "availableDate": "2024-08-13T22:00:00Z",
+    "untilDate": "2024-12-15T00:00:00Z",
     "questions": [
       {
         "_id": "Q2011",
         "question": "What is the primary force acting against the motion of an aircraft?",
-        "options": ["Lift", "Thrust", "Drag", "Gravity"],
+        "options": [
+          "Lift",
+          "Thrust",
+          "Drag",
+          "Gravity"
+        ],
         "answer": "Drag"
       },
       {
         "_id": "Q2012",
         "question": "Which principle explains how wings generate lift?",
-        "options": ["Bernoulli's Principle", "Newton's Third Law", "Archimedes' Principle", "Pascal's Law"],
+        "options": [
+          "Bernoulli's Principle",
+          "Newton's Third Law",
+          "Archimedes' Principle",
+          "Pascal's Law"
+        ],
         "answer": "Bernoulli's Principle"
       },
       {
         "_id": "Q2013",
         "question": "What is the term for the angle between the chord line of the wing and the oncoming air?",
-        "options": ["Angle of Attack", "Bank Angle", "Yaw Angle", "Pitch Angle"],
+        "options": [
+          "Angle of Attack",
+          "Bank Angle",
+          "Yaw Angle",
+          "Pitch Angle"
+        ],
         "answer": "Angle of Attack"
       }
     ]
@@ -127,11 +175,12 @@
     "title": "Spacecraft Structural Design Quiz",
     "description": "Evaluate your knowledge on designing spacecraft structures.",
     "course": "RS103",
+    "quizStatus": true,
     "quizType": "Ungraded Survey",
     "points": 0,
     "assignmentGroup": "Surveys",
     "shuffleAnswers": false,
-    "timeLimit": "15 Minutes",
+    "timeLimit": 15,
     "multipleAttempts": true,
     "howManyAttempts": 5,
     "showCorrectAnswers": "Never",
@@ -139,26 +188,41 @@
     "oneQuestionAtATime": true,
     "webcamRequired": false,
     "lockQuestionsAfterAnswering": true,
-    "dueDate": "2024-12-20",
-    "availableDate": "2024-11-15",
-    "untilDate": "2024-12-20",
+    "dueDate": "2025-12-29T13:00:00Z",
+    "availableDate": "2024-08-13T22:00:00Z",
+    "untilDate": "2024-12-15T00:00:00Z",
     "questions": [
       {
         "_id": "Q3011",
         "question": "What is the primary material used in spacecraft structural design?",
-        "options": ["Aluminum", "Titanium", "Carbon Fiber Composites", "Steel"],
+        "options": [
+          "Aluminum",
+          "Titanium",
+          "Carbon Fiber Composites",
+          "Steel"
+        ],
         "answer": "Carbon Fiber Composites"
       },
       {
         "_id": "Q3012",
         "question": "Why is weight a critical factor in spacecraft design?",
-        "options": ["Affects fuel efficiency", "Influences structural integrity", "Impacts launch costs", "All of the above"],
+        "options": [
+          "Affects fuel efficiency",
+          "Influences structural integrity",
+          "Impacts launch costs",
+          "All of the above"
+        ],
         "answer": "All of the above"
       },
       {
         "_id": "Q3013",
         "question": "What is the purpose of thermal protection systems in spacecraft?",
-        "options": ["Protect against micrometeoroids", "Insulate against extreme temperatures", "Enhance structural strength", "Improve aerodynamics"],
+        "options": [
+          "Protect against micrometeoroids",
+          "Insulate against extreme temperatures",
+          "Enhance structural strength",
+          "Improve aerodynamics"
+        ],
         "answer": "Insulate against extreme temperatures"
       }
     ]

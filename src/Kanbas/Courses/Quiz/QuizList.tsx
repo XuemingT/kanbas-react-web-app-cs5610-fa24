@@ -8,7 +8,16 @@ import * as db from "../../Database";
 import LessonControlButtons from "../Modules/LessonControlButtons";
 import ModuleControlButtons from "../Modules/ModuleControlButtons";
 import ModulesControls from "../Modules/ModulesControls";
+import { format, parseISO } from 'date-fns';
 
+function formatDate(dateString: string) {
+  try {
+    const date = parseISO(dateString);
+    return format(date, "MMM d 'at' h:mm a 'UTC'");
+  } catch (error) {
+    return "Invalid Date";
+  }
+}
 // interface Quiz {
 //   _id: string;
 //   title: string;
@@ -17,24 +26,24 @@ import ModulesControls from "../Modules/ModulesControls";
 //   timeLimit: string;
 //   questions: number;
 //   points: number;
-  // _id: string; // Changed from _id: string to id: number
-  // course: string;
-  // quizTitle: string; // Changed from title: string to quizTitle: string
-  // quizType: string;
-  // points: number;
-  // assignmentGroup: string;
-  // shuffleAnswers: boolean;
-  // timeLimit: string;
-  // multipleAttempts: boolean;
-  // howManyAttempts: number;
-  // showCorrectAnswers: string;
-  // accessCode: string;
-  // oneQuestionAtATime: boolean;
-  // webcamRequired: boolean;
-  // lockQuestionsAfterAnswering: boolean;
-  // dueDate: string;
-  // availableDate: string;
-  // untilDate: string;
+// _id: string; // Changed from _id: string to id: number
+// course: string;
+// quizTitle: string; // Changed from title: string to quizTitle: string
+// quizType: string;
+// points: number;
+// assignmentGroup: string;
+// shuffleAnswers: boolean;
+// timeLimit: string;
+// multipleAttempts: boolean;
+// howManyAttempts: number;
+// showCorrectAnswers: string;
+// accessCode: string;
+// oneQuestionAtATime: boolean;
+// webcamRequired: boolean;
+// lockQuestionsAfterAnswering: boolean;
+// dueDate: string;
+// availableDate: string;
+// untilDate: string;
 // }
 export default function QuizList() {
   const { cid } = useParams<{ cid: string }>();
@@ -118,10 +127,10 @@ export default function QuizList() {
                     </div>
                   </div>
                   <div className="text-muted ms-5">
-                    <span className="text-danger">Multiple Modules</span> |{" "}
+                    <span className="text-danger">{quiz.quizStatus ? "Open" : "Closed"}</span> |{" "}
                     <strong>Not available until</strong>{" "}
-                    {quiz.availableDate} |<br />
-                    <strong>Due:</strong> {quiz.dueDate} at 11:59pm |{" "}
+                    {formatDate(quiz.availableDate)} |<br />
+                    <strong>Due:</strong> {formatDate(quiz.dueDate)} |{" "}
                     <strong>Points:</strong> {quiz.points} pts
                   </div>
                 </li>

@@ -13,7 +13,7 @@ export default function Quiz() {
         <Route path=":qid/" element={<QuizDetails />} />
         <Route path=":qid/QuizEditor" element={<QuizEditor />} />
         <Route path=":qid/QuizPreview" element={<QuizPreview />} />
-        {/* <Route path="new" element={<QuizDetails />} /> */}
+        <Route path="new" element={<QuizDetails />} />
       </Routes>
     </div>
   );
