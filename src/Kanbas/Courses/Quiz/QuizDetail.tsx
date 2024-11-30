@@ -2,59 +2,21 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as db from "../../Database";
 
-interface QuizDetails {
-  quizType: string;
-  points: number;
-  assignmentGroup: string;
-  shuffleAnswers: boolean;
-  timeLimit: number;
-  multipleAttempts: boolean;
-  attempts: number;
-  showCorrectAnswers: string;
-  accessCode: string;
-  oneQuestionAtATime: boolean;
-  webcamRequired: boolean;
-  lockQuestionsAfterAnswering: boolean;
-  dueDate: string;
-  availableDate: string;
-  untilDate: string;
-}
-
 export default function QuizDetails() {
   const navigate = useNavigate();
-  // const { cid } = useParams();
   const { cid, qid } = useParams<{ cid: string; qid: string }>();
 
-  // // Find the specific quiz based on course ID and quiz ID
-  // const quiz = db.quizzes.find(
-  //   (quiz) => quiz._id === qid && quiz.course === cid
-  // );
+  // Find the specific quiz based on course ID and quiz ID
+  const quiz = db.quizzes.find(
+    (quiz) => quiz._id === qid && quiz.course === cid
+  );
 
-//   console.log("cid:", cid);
-// console.log("qid:", qid);
-// console.log("quiz:", quiz);
-  // if (!quiz) {
-  //   return <div>Quiz not found</div>;
-  // }
-
-  const [quiz, setQuiz] = React.useState<QuizDetails>({
-    quizType: "Graded Quiz",
-    points: 29,
-    assignmentGroup: "QUIZZES",
-    shuffleAnswers: false,
-    timeLimit: 30, 
-    multipleAttempts: false,
-    attempts: 1,
-    showCorrectAnswers: "Immediately",
-    accessCode: "",
-    oneQuestionAtATime: true,
-    webcamRequired: false,
-    lockQuestionsAfterAnswering: false,
-    dueDate: "Sep 21 at 1pm",
-    availableDate: "Sep 21 at 11:40am",
-    untilDate: "Sep 21 at 1pm",
-  });
-
+  console.log("cid:", cid);
+  console.log("qid:", qid);
+  console.log("quiz:", quiz);
+  if (!quiz) {
+    return <div>Quiz not found</div>;
+  }
   const handlePreview = () => {
     navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizPreview`);
   };
@@ -63,24 +25,10 @@ export default function QuizDetails() {
     navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizEditor`);
   };
 
-  // const handlePreview = () => {
-  //   navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizPreview`);
-  // };
-
-  // const handleEdit = () => {
-  //   navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizEditor`);
-  // };
-
-
-  // const { cid } = useParams<{ cid: string }>();
-  // const quizzes = db.quizzes.find(
-  //   (quiz) => quiz.course === cid
-  // );
-
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Q1 - HTML</h2>
+        <h2>{quiz.title}</h2>
         <div>
           <button className="btn btn-secondary me-2" onClick={handlePreview}>
             Preview
