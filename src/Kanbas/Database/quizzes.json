@@ -1,7 +1,7 @@
 [
   {
     "_id": "Q101",
-    "name": "Introduction to Biology Quiz",
+    "title": "Introduction to Biology Quiz",
     "description": "A basic quiz covering fundamental concepts in biology.",
     "course": "RS101",
     "quizType": "Graded Quiz",
@@ -42,7 +42,7 @@
   },
   {
     "_id": "Q102",
-    "name": "Algebra Practice Quiz",
+    "title": "Algebra Practice Quiz",
     "description": "Practice problems to strengthen your algebra skills.",
     "course": "RS101",
     "quizType": "Practice Quiz",
@@ -83,7 +83,7 @@
   },
   {
     "_id": "Q201",
-    "name": "Fundamentals of Aerodynamics Quiz",
+    "title": "Fundamentals of Aerodynamics Quiz",
     "description": "Assess your understanding of basic aerodynamic principles.",
     "course": "RS102",
     "quizType": "Graded Quiz",
@@ -124,7 +124,7 @@
   },
   {
     "_id": "Q301",
-    "name": "Spacecraft Structural Design Quiz",
+    "title": "Spacecraft Structural Design Quiz",
     "description": "Evaluate your knowledge on designing spacecraft structures.",
     "course": "RS103",
     "quizType": "Ungraded Survey",
