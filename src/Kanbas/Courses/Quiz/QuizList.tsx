@@ -9,14 +9,14 @@ import LessonControlButtons from "../Modules/LessonControlButtons";
 import ModuleControlButtons from "../Modules/ModuleControlButtons";
 import ModulesControls from "../Modules/ModulesControls";
 
-interface Quiz {
-  _id: string;
-  title: string;
-  status: string;
-  dueDate: string;
-  timeLimit: string;
-  questions: number;
-  points: number;
+// interface Quiz {
+//   _id: string;
+//   title: string;
+//   status: string;
+//   dueDate: string;
+//   timeLimit: string;
+//   questions: number;
+//   points: number;
   // _id: string; // Changed from _id: string to id: number
   // course: string;
   // quizTitle: string; // Changed from title: string to quizTitle: string
@@ -35,7 +35,7 @@ interface Quiz {
   // dueDate: string;
   // availableDate: string;
   // untilDate: string;
-}
+// }
 export default function QuizList() {
   const { cid } = useParams<{ cid: string }>();
   const quizzes = db.quizzes.filter(

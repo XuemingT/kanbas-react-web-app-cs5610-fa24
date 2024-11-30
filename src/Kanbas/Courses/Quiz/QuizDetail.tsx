@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import * as db from "../../Database";
 
 interface QuizDetails {
   quizType: string;
@@ -15,20 +16,33 @@ interface QuizDetails {
   webcamRequired: boolean;
   lockQuestionsAfterAnswering: boolean;
   dueDate: string;
-  availableFrom: string;
-  until: string;
+  availableDate: string;
+  untilDate: string;
 }
 
 export default function QuizDetails() {
   const navigate = useNavigate();
-  const { cid } = useParams();
+  // const { cid } = useParams();
+  const { cid, qid } = useParams<{ cid: string; qid: string }>();
+
+  // // Find the specific quiz based on course ID and quiz ID
+  // const quiz = db.quizzes.find(
+  //   (quiz) => quiz._id === qid && quiz.course === cid
+  // );
+
+//   console.log("cid:", cid);
+// console.log("qid:", qid);
+// console.log("quiz:", quiz);
+  // if (!quiz) {
+  //   return <div>Quiz not found</div>;
+  // }
 
   const [quiz, setQuiz] = React.useState<QuizDetails>({
     quizType: "Graded Quiz",
     points: 29,
     assignmentGroup: "QUIZZES",
     shuffleAnswers: false,
-    timeLimit: 30,
+    timeLimit: 30, 
     multipleAttempts: false,
     attempts: 1,
     showCorrectAnswers: "Immediately",
@@ -37,17 +51,31 @@ export default function QuizDetails() {
     webcamRequired: false,
     lockQuestionsAfterAnswering: false,
     dueDate: "Sep 21 at 1pm",
-    availableFrom: "Sep 21 at 11:40am",
-    until: "Sep 21 at 1pm",
+    availableDate: "Sep 21 at 11:40am",
+    untilDate: "Sep 21 at 1pm",
   });
 
   const handlePreview = () => {
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/QuizDetails/QuizPreview`);
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizPreview`);
   };
 
   const handleEdit = () => {
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/QuizDetails/QuizEditor`);
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizEditor`);
   };
+
+  // const handlePreview = () => {
+  //   navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizPreview`);
+  // };
+
+  // const handleEdit = () => {
+  //   navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizEditor`);
+  // };
+
+
+  // const { cid } = useParams<{ cid: string }>();
+  // const quizzes = db.quizzes.find(
+  //   (quiz) => quiz.course === cid
+  // );
 
   return (
     <div className="p-4">
@@ -137,8 +165,8 @@ export default function QuizDetails() {
               <tr>
                 <td>{quiz.dueDate}</td>
                 <td>Everyone</td>
-                <td>{quiz.availableFrom}</td>
-                <td>{quiz.until}</td>
+                <td>{quiz.availableDate}</td>
+                <td>{quiz.untilDate}</td>
               </tr>
             </tbody>
           </table>

@@ -6,10 +6,11 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export default function QuizControlButton() {
   const navigate = useNavigate();
-  const { cid } = useParams();
+  // const { cid } = useParams();
+  const { cid, qid } = useParams<{ cid: string; qid: string }>();
 
   const handleAddQuiz = () => {
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/QuizDetails`);
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/new`);
   };
 
   return (
