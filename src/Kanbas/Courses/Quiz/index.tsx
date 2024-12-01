@@ -7,27 +7,14 @@ import QuizPreview from "./QuizPreview";
 
 export default function Quiz() {
   return (
-    <div id="wd-assignments">
+    <div>
       <Routes>
         <Route path="/" element={<QuizList />} />
-        <Route path=":qid/" element={<QuizDetails />} />
-        <Route path=":qid/QuizEditor" element={<QuizEditor />} />
-        <Route path=":qid/QuizPreview" element={<QuizPreview />} />
-        <Route path="new" element={<QuizDetails />} />
+        <Route path="/:qid/edit" element={<QuizEditor />} />
+        <Route path="/:qid" element={<QuizDetails />} />
+        <Route path="/:qid/edit" element={<QuizEditor />} />
+        <Route path="/:qid/preview" element={<QuizPreview />} />
       </Routes>
     </div>
   );
 }
-// export default function Quiz() {
-//   return (
-//     <div id="wd-quizzes">
-//       <Routes>
-//         <Route path="/Kanbas/Courses/:cid/Quizzes" element={<QuizList />} />
-//         <Route path="/Kanbas/Courses/:cid/Quizzes/:qid" element={<QuizDetails />} />
-//         <Route path="/Kanbas/Courses/:cid/Quizzes/:qid/QuizEditor" element={<QuizEditor />} />
-//         <Route path="/Kanbas/Courses/:cid/Quizzes/:qid/QuizPreview" element={<QuizPreview />} />
-//         <Route path="/Kanbas/Courses/:cid/Quizzes/new" element={<QuizDetails />} />
-//       </Routes>
-//     </div>
-//   );
-// }

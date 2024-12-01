@@ -1,135 +1,216 @@
-import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import * as db from "../../Database";
-import { format, parseISO } from 'date-fns';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { findQuizById } from "./client";
+import { Quiz } from "./types";
+import { format, parseISO } from "date-fns";
+import { IoEllipsisVertical } from "react-icons/io5";
+import { FaClock, FaCalendarAlt, FaLock, FaEye } from "react-icons/fa";
 
 function formatDate(dateString: string) {
   try {
     const date = parseISO(dateString);
-    return format(date, "MMM d 'at' h:mm a 'UTC'");
+    return format(date, "MMM d, yyyy 'at' h:mm a");
   } catch (error) {
     return "Invalid Date";
   }
 }
 
-export default function QuizDetails() {
-  const navigate = useNavigate();
+const QuizDetail: React.FC = () => {
   const { cid, qid } = useParams<{ cid: string; qid: string }>();
+  const navigate = useNavigate();
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Find the specific quiz based on course ID and quiz ID
-  const quiz = db.quizzes.find(
-    (quiz) => quiz._id === qid && quiz.course === cid
-  );
+  const calculateTotalPoints = (quiz: Quiz) => {
+    return quiz.questions.reduce((sum, q) => sum + (q.points || 0), 0);
+  };
 
-  console.log("cid:", cid);
-  console.log("qid:", qid);
-  console.log("quiz:", quiz);
-  if (!quiz) {
-    return <div>Quiz not found</div>;
+  useEffect(() => {
+    const loadQuiz = async () => {
+      try {
+        setLoading(true);
+        const quizData = await findQuizById(qid as string);
+        setQuiz(quizData);
+      } catch (error) {
+        console.error("Error loading quiz:", error);
+        setError("Failed to load quiz details");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadQuiz();
+  }, [qid]);
+
+  const handleStartQuiz = () => {
+    // Navigate to quiz taking interface
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/take`);
+  };
+
+  const handlePreviewQuiz = () => {
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/preview`);
+  };
+
+  const handleEditQuiz = () => {
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/edit`);
+  };
+
+  if (loading) {
+    return (
+      <div className="p-4">
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
   }
-  const handlePreview = () => {
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizPreview`);
-  };
 
-  const handleEdit = () => {
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizEditor`);
-  };
+  if (error || !quiz) {
+    return (
+      <div className="p-4">
+        <div className="alert alert-danger" role="alert">
+          {error || "Quiz not found"}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>{quiz.title}</h2> 
+      <div className="d-flex justify-content-between align-items-start mb-4">
         <div>
-          <button className="btn btn-secondary me-2" onClick={handlePreview}>
+          <h2 className="mb-3">{quiz.title}</h2>
+          <div className="text-muted mb-3">
+            <span
+              className={
+                quiz.status === "published" ? "text-success" : "text-danger"
+              }
+            >
+              {quiz.status === "published" ? "Published" : "Not Published"}
+            </span>
+          </div>
+        </div>
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-outline-primary"
+            onClick={handlePreviewQuiz}
+            title="Preview Quiz"
+          >
+            <FaEye className="me-2" />
             Preview
           </button>
-          <button className="btn btn-secondary" onClick={handleEdit}>
+          <button
+            className="btn btn-outline-secondary"
+            onClick={handleEditQuiz}
+            title="Edit Quiz"
+          >
             Edit
+          </button>
+          <button className="btn btn-outline-secondary">
+            <IoEllipsisVertical />
           </button>
         </div>
       </div>
 
       <div className="row">
-        <div className="col-8">
-          <table className="table">
-            <tbody>
-              <tr>
-                <td className="text-end" style={{ width: "200px" }}>
-                  Quiz Type
-                </td>
-                <td>{quiz.quizType}</td>
-              </tr>
-              <tr>
-                <td className="text-end">Points</td>
-                <td>{quiz.points}</td>
-              </tr>
-              <tr>
-                <td className="text-end">Assignment Group</td>
-                <td>{quiz.assignmentGroup}</td>
-              </tr>
-              <tr>
-                <td className="text-end">Shuffle Answers</td>
-                <td>{quiz.shuffleAnswers ? "Yes" : "No"}</td>
-              </tr>
-              <tr>
-                <td className="text-end">Time Limit</td>
-                <td>{quiz.timeLimit} Minutes</td>
-              </tr>
-              <tr>
-                <td className="text-end">Multiple Attempts</td>
-                <td>{quiz.multipleAttempts ? "Yes" : "No"}</td>
-              </tr>
-              <tr>
-                <td className="text-end">View Responses</td>
-                <td>Always</td>
-              </tr>
-              <tr>
-                <td className="text-end">Show Correct Answers</td>
-                <td>{quiz.showCorrectAnswers}</td>
-              </tr>
-              <tr>
-                <td className="text-end">One Question at a Time</td>
-                <td>{quiz.oneQuestionAtATime ? "Yes" : "No"}</td>
-              </tr>
-              <tr>
-                <td className="text-end">Require Respondus LockDown Browser</td>
-                <td>No</td>
-              </tr>
-              <tr>
-                <td className="text-end">Required to View Quiz Results</td>
-                <td>No</td>
-              </tr>
-              <tr>
-                <td className="text-end">Webcam Required</td>
-                <td>{quiz.webcamRequired ? "Yes" : "No"}</td>
-              </tr>
-              <tr>
-                <td className="text-end">Lock Questions After Answering</td>
-                <td>{quiz.lockQuestionsAfterAnswering ? "Yes" : "No"}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="col-md-8">
+          <div className="card mb-4">
+            <div className="card-body">
+              <h5 className="card-title mb-3">Quiz Instructions</h5>
+              <p className="card-text">
+                {quiz.description || "No instructions provided."}
+              </p>
 
-          <table className="table mt-4">
-            <thead>
-              <tr>
-                <th>Due</th>
-                <th>For</th>
-                <th>Available from</th>
-                <th>Until</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{formatDate(quiz.dueDate)}</td>
-                <td>Everyone</td>
-                <td>{formatDate(quiz.availableDate)}</td>
-                <td>{formatDate(quiz.untilDate)}</td>
-              </tr>
-            </tbody>
-          </table>
+              <hr />
+
+              <div className="d-flex align-items-center mb-3">
+                <FaClock className="text-secondary me-2" />
+                <div>
+                  {quiz.timeLimit > 0 ? (
+                    <span>Time limit: {quiz.timeLimit} minutes</span>
+                  ) : (
+                    <span>No time limit</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="d-flex align-items-center mb-3">
+                <FaCalendarAlt className="text-secondary me-2" />
+                <div>
+                  <div>Available from: {formatDate(quiz.availableFrom)}</div>
+                  <div>Due: {formatDate(quiz.dueDate)}</div>
+                  <div>Until: {formatDate(quiz.until)}</div>
+                </div>
+              </div>
+
+              {quiz.accessCode && (
+                <div className="d-flex align-items-center mb-3">
+                  <FaLock className="text-secondary me-2" />
+                  <div>Access code required</div>
+                </div>
+              )}
+
+              <div className="mt-4">
+                <h6>Points: {calculateTotalPoints(quiz)}</h6>
+                <h6>Questions: {quiz.questions.length}</h6>
+                {quiz.multipleAttempts && (
+                  <h6>Allowed Attempts: {quiz.attempts}</h6>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {quiz.status === "published" && (
+            <button
+              className="btn btn-primary btn-lg"
+              onClick={handleStartQuiz}
+            >
+              Start Quiz
+            </button>
+          )}
+        </div>
+
+        <div className="col-md-4">
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">Quiz Settings</h5>
+              <ul className="list-group list-group-flush">
+                <li className="list-group-item">
+                  <div className="fw-bold">Shuffle Answers</div>
+                  <div>{quiz.shuffleAnswers ? "Yes" : "No"}</div>
+                </li>
+                <li className="list-group-item">
+                  <div className="fw-bold">Show Questions</div>
+                  <div>
+                    {quiz.oneQuestionAtATime ? "One at a time" : "All at once"}
+                  </div>
+                </li>
+                <li className="list-group-item">
+                  <div className="fw-bold">Lock Questions</div>
+                  <div>
+                    {quiz.lockQuestionsAfterAnswering
+                      ? "After answering"
+                      : "Not locked"}
+                  </div>
+                </li>
+                <li className="list-group-item">
+                  <div className="fw-bold">Show Correct Answers</div>
+                  <div>{quiz.showCorrectAnswers}</div>
+                </li>
+                {quiz.webcamRequired && (
+                  <li className="list-group-item">
+                    <div className="fw-bold text-danger">Webcam Required</div>
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default QuizDetail;

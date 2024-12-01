@@ -1,67 +1,99 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
-interface Question {
-  id: string;
-  type: "MULTIPLE_CHOICE" | "TRUE_FALSE" | "FILL_BLANK";
-  points: number;
-  text: string;
-  options?: string[];
-  correctAnswer?: string | boolean;
-  isEditing: boolean;
-}
+import {
+  addQuestionToQuiz,
+  updateQuizQuestion,
+  deleteQuizQuestion,
+} from "./client";
+import { Question, Quiz } from "./types";
 
 interface QuizQuestionsProps {
+  quizData: Quiz;
   onPointsUpdate: (points: number) => void;
   onSave: () => void;
   onCancel: () => void;
 }
 
 const QuizQuestions: React.FC<QuizQuestionsProps> = ({
+  quizData,
   onPointsUpdate,
   onSave,
   onCancel,
 }) => {
-  const { cid } = useParams();
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [totalPoints, setTotalPoints] = useState(0);
+  const { qid } = useParams();
+  const [questions, setQuestions] = useState<Question[]>(
+    quizData.questions || []
+  );
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const addNewQuestion = () => {
-    const newQuestion: Question = {
-      id: Date.now().toString(),
-      type: "MULTIPLE_CHOICE",
-      points: 1,
-      text: "",
-      options: ["", ""],
-      correctAnswer: "",
-      isEditing: true,
-    };
-    setQuestions([...questions, newQuestion]);
-    setTotalPoints((prev) => prev + 1);
+  useEffect(() => {
+    calculateTotalPoints();
+  }, [questions]);
+
+  const calculateTotalPoints = () => {
+    const total = questions.reduce((sum, q) => sum + (q.points || 0), 0);
+    onPointsUpdate(total);
   };
 
-  const handleQuestionEdit = (
+  const addNewQuestion = async () => {
+    try {
+      setLoading(true);
+      const newQuestion: Partial<Question> = {
+        type: "MULTIPLE_CHOICE",
+        points: 1,
+        question: "",
+        options: ["Option 1", "Option 2"],
+        correctAnswer: null,
+      };
+
+      const addedQuestion = await addQuestionToQuiz(qid as string, newQuestion);
+      setQuestions([...questions, addedQuestion]);
+    } catch (error) {
+      setError("Failed to add question");
+      console.error("Error adding question:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleQuestionEdit = async (
     questionId: string,
-    field: string,
+    field: keyof Question,
     value: any
   ) => {
-    setQuestions(
-      questions.map((q) => (q.id === questionId ? { ...q, [field]: value } : q))
-    );
+    try {
+      setLoading(true);
+      const updatedQuestion = await updateQuizQuestion(
+        qid as string,
+        questionId,
+        { [field]: value }
+      );
+
+      setQuestions(
+        questions.map((q) =>
+          q._id === questionId ? { ...q, ...updatedQuestion } : q
+        )
+      );
+    } catch (error) {
+      setError("Failed to update question");
+      console.error("Error updating question:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handlePointsChange = (questionId: string, newPoints: number) => {
-    setQuestions(
-      questions.map((q) =>
-        q.id === questionId ? { ...q, points: newPoints } : q
-      )
-    );
-    const newTotal = questions.reduce(
-      (sum, q) => sum + (q.id === questionId ? newPoints : q.points),
-      0
-    );
-    setTotalPoints(newTotal);
-    onPointsUpdate(newTotal);
+  const handleQuestionDelete = async (questionId: string) => {
+    try {
+      setLoading(true);
+      await deleteQuizQuestion(qid as string, questionId);
+      setQuestions(questions.filter((q) => q._id !== questionId));
+    } catch (error) {
+      setError("Failed to delete question");
+      console.error("Error deleting question:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const QuestionEditor = ({ question }: { question: Question }) => (
@@ -71,7 +103,7 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({
           className="form-select w-25"
           value={question.type}
           onChange={(e) =>
-            handleQuestionEdit(question.id, "type", e.target.value)
+            handleQuestionEdit(question._id, "type", e.target.value)
           }
         >
           <option value="MULTIPLE_CHOICE">Multiple Choice</option>
@@ -84,10 +116,21 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({
             className="form-control w-75 me-2"
             value={question.points}
             onChange={(e) =>
-              handlePointsChange(question.id, parseInt(e.target.value))
+              handleQuestionEdit(
+                question._id,
+                "points",
+                parseInt(e.target.value) || 0
+              )
             }
+            min="0"
           />
           <span>pts</span>
+          <button
+            className="btn btn-danger ms-3"
+            onClick={() => handleQuestionDelete(question._id)}
+          >
+            Delete
+          </button>
         </div>
       </div>
 
@@ -95,9 +138,9 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({
         <textarea
           className="form-control"
           placeholder="Question Text"
-          value={question.text}
+          value={question.question}
           onChange={(e) =>
-            handleQuestionEdit(question.id, "text", e.target.value)
+            handleQuestionEdit(question._id, "question", e.target.value)
           }
           rows={3}
         />
@@ -109,11 +152,11 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({
             <div key={index} className="d-flex align-items-center mb-2">
               <input
                 type="radio"
-                name={`question-${question.id}`}
+                name={`question-${question._id}`}
                 className="me-2"
                 checked={question.correctAnswer === option}
                 onChange={() =>
-                  handleQuestionEdit(question.id, "correctAnswer", option)
+                  handleQuestionEdit(question._id, "correctAnswer", option)
                 }
               />
               <input
@@ -124,16 +167,29 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({
                 onChange={(e) => {
                   const newOptions = [...(question.options || [])];
                   newOptions[index] = e.target.value;
-                  handleQuestionEdit(question.id, "options", newOptions);
+                  handleQuestionEdit(question._id, "options", newOptions);
                 }}
               />
+              {index > 1 && (
+                <button
+                  className="btn btn-link text-danger"
+                  onClick={() => {
+                    const newOptions = question.options?.filter(
+                      (_, i) => i !== index
+                    );
+                    handleQuestionEdit(question._id, "options", newOptions);
+                  }}
+                >
+                  Remove
+                </button>
+              )}
             </div>
           ))}
           <button
             className="btn btn-secondary mt-2"
             onClick={() => {
               const newOptions = [...(question.options || []), ""];
-              handleQuestionEdit(question.id, "options", newOptions);
+              handleQuestionEdit(question._id, "options", newOptions);
             }}
           >
             Add Option
@@ -147,10 +203,10 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({
             <input
               type="radio"
               className="form-check-input"
-              name={`question-${question.id}`}
-              checked={question.correctAnswer === true}
+              name={`question-${question._id}`}
+              checked={question.correctAnswer === "true"}
               onChange={() =>
-                handleQuestionEdit(question.id, "correctAnswer", true)
+                handleQuestionEdit(question._id, "correctAnswer", "true")
               }
             />
             <label className="form-check-label">True</label>
@@ -159,10 +215,10 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({
             <input
               type="radio"
               className="form-check-input"
-              name={`question-${question.id}`}
-              checked={question.correctAnswer === false}
+              name={`question-${question._id}`}
+              checked={question.correctAnswer === "false"}
               onChange={() =>
-                handleQuestionEdit(question.id, "correctAnswer", false)
+                handleQuestionEdit(question._id, "correctAnswer", "false")
               }
             />
             <label className="form-check-label">False</label>
@@ -178,7 +234,7 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({
             placeholder="Correct Answer"
             value={(question.correctAnswer as string) || ""}
             onChange={(e) =>
-              handleQuestionEdit(question.id, "correctAnswer", e.target.value)
+              handleQuestionEdit(question._id, "correctAnswer", e.target.value)
             }
           />
         </div>
@@ -188,23 +244,39 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({
 
   return (
     <div className="p-4">
+      {error && <div className="alert alert-danger">{error}</div>}
+
       <div className="mb-3">
-        <button className="btn btn-secondary" onClick={addNewQuestion}>
-          + New Question
+        <button
+          className="btn btn-secondary"
+          onClick={addNewQuestion}
+          disabled={loading}
+        >
+          {loading ? "Adding..." : "+ New Question"}
         </button>
       </div>
 
       {questions.map((question) => (
-        <QuestionEditor key={question.id} question={question} />
+        <QuestionEditor key={question._id} question={question} />
       ))}
 
       <div className="d-flex justify-content-between mt-4">
-        <div>Total Points: {totalPoints}</div>
         <div>
-          <button className="btn btn-light me-2" onClick={onCancel}>
+          Total Points: {questions.reduce((sum, q) => sum + (q.points || 0), 0)}
+        </div>
+        <div>
+          <button
+            className="btn btn-light me-2"
+            onClick={onCancel}
+            disabled={loading}
+          >
             Cancel
           </button>
-          <button className="btn btn-danger" onClick={onSave}>
+          <button
+            className="btn btn-danger"
+            onClick={onSave}
+            disabled={loading}
+          >
             Save
           </button>
         </div>
