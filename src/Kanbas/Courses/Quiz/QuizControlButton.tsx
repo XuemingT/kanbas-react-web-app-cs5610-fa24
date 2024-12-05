@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux"; // Add this
+import { useDispatch, useSelector } from "react-redux"; // Add this
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa6";
@@ -17,6 +17,9 @@ export default function QuizControlButton({
   const navigate = useNavigate();
   const { cid } = useParams();
   const dispatch = useDispatch();
+  const { currentUser} = useSelector((state: any) => state.accountReducer);
+
+
 
   const handleAddQuiz = async () => {
     try {
@@ -67,14 +70,20 @@ export default function QuizControlButton({
             onChange={(e) => onSearch(e.target.value)}
           />
         </div>
-        <button className="btn btn-danger" onClick={handleAddQuiz}>
-          <FaPlus className="me-2" />
-          Quiz
-        </button>
+        
+        {currentUser.role === "FACULTY" && (
+          <button className="btn btn-danger" onClick={handleAddQuiz}>
+            <FaPlus className="me-2" />
+            Quiz
+          </button>
+        )}
       </div>
+
       <button className="btn btn-light">
         <IoEllipsisVertical />
       </button>
+      
+
     </div>
   );
 }

@@ -26,6 +26,8 @@ const QuizList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+
 
   const allQuizzes = useSelector((state: RootState) =>
     state.quizzesReducer.quizzes.filter((quiz) => quiz.course === cid)
@@ -111,28 +113,42 @@ const QuizList: React.FC = () => {
                   <li
                     key={quiz._id}
                     className="list-group-item p-4 border-start-0 border-end-0"
-                    style={{
-                      borderLeft: "4px solid green",
-                    }}
+                  // style={{
+                  //   borderLeft: "4px solid green",
+                  // }}
                   >
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="d-flex align-items-center">
                         <BsGripVertical className="me-3 text-secondary" />
                         <FaBook className="me-3 text-success" />
                         <div>
-                          <Link
+                          {/* <Link
                             to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
                             className="text-decoration-none"
                           >
                             <h6 className="mb-1">{quiz.title}</h6>
-                          </Link>
+                          </Link> */}
+                          {currentUser.role === "FACULTY" ? (
+                            <Link
+                              to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
+                              className="text-decoration-none"
+                            >
+                              <h6 className="mb-1">{quiz.title}</h6>
+                            </Link>
+                          ) : (
+                            <Link
+                              to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/preview`}
+                              className="text-decoration-none"
+                            >
+                              <h6 className="mb-1">{quiz.title}</h6>
+                            </Link>
+                          )}
                           <div className="text-muted small">
                             <span
-                              className={`me-2 ${
-                                quiz.status === "published"
-                                  ? "text-success"
-                                  : "text-danger"
-                              }`}
+                              className={`me-2 ${quiz.status === "published"
+                                ? "text-success"
+                                : "text-danger"
+                                }`}
                             >
                               {quiz.status === "published"
                                 ? "✓ Published"
@@ -154,12 +170,45 @@ const QuizList: React.FC = () => {
                         </div>
                       </div>
                       <div className="d-flex align-items-center">
-                        <button
+                        {/* <button
                           className="btn btn-link p-0 me-3"
                           title="More options"
                         >
                           <IoEllipsisVertical />
-                        </button>
+                        </button> */}
+                        {currentUser.role === "FACULTY" && (
+                          <div className="dropdown">
+                            <button
+                              className="btn btn-light"
+                              type="button"
+                              id="dropdownMenuButton"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              <IoEllipsisVertical />
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <li>
+                                <button className="dropdown-item">Edit</button>
+                                <Link to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>
+                                  Edit Quiz
+                                </Link>
+                              </li>
+                              <li>
+                                <button className="dropdown-item">Delete</button>
+                              </li>
+                              <li>
+                                <button className="dropdown-item">Publish</button>
+                              </li>
+                              <li>
+                                <button className="dropdown-item">Copy</button>
+                              </li>
+                              <li>
+                                <button className="dropdown-item">Sort</button>
+                              </li>
+                            </ul>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </li>
