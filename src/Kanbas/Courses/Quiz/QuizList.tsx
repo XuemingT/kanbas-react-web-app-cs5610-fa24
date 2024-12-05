@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteQuiz, setQuizStatus, setQuizzes } from "./reducer";
-import { findQuizzesForCourse } from "./client";
+import { deleteQuiz, setQuizStatus, setQuizzes, updateQuiz } from "./reducer";
+import { findQuizzesForCourse, updateQuizStatus } from "./client";
 import { RootState } from "../../store";
 import { BsGripVertical } from "react-icons/bs";
 import { IoEllipsisVertical } from "react-icons/io5";
@@ -101,6 +101,25 @@ const QuizList: React.FC = () => {
       </div>
     );
   }
+
+  // const handlePublishToggle = (quizId: string, currentStatus: string) => {
+  //   const newStatus = currentStatus === "published" ? "draft" : "published";
+  //   dispatch(setQuizStatus({ quizId, status: newStatus }));
+  // };
+  const handlePublishToggle = async (quizId: string, currentStatus: string) => {
+    const newStatus = currentStatus === "published" ? "draft" : "published";
+  
+    try {
+      // Call the API to update the status
+      const updatedQuiz = await updateQuizStatus(quizId, newStatus);
+  
+      // Update Redux state with the new status
+      dispatch(setQuizStatus({ quizId, status: updatedQuiz.status }));
+    } catch (error) {
+      console.error("Failed to update quiz status:", error);
+      // Optionally, show an error message to the user
+    }
+  };
 
   return (
     <div id="wd-assignments" className="px-4">
@@ -211,8 +230,20 @@ const QuizList: React.FC = () => {
                                   Delete
                                 </button>
                               </li>
+                              {/* <li>
+                                <button className="dropdown-item">
+                                  {quiz.status === "published" ? "Unpublish" : "Publish"}
+                                </button>
+                              </li> */}
                               <li>
-                                <button className="dropdown-item">Publish</button>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() =>
+                                    handlePublishToggle(quiz._id, quiz.status === "published" ? "draft" : "published")
+                                  }
+                                >
+                                  {quiz.status === "published" ? "Unpublish" : "Publish"}
+                                </button>
                               </li>
                               <li>
                                 <button className="dropdown-item">Copy</button>
