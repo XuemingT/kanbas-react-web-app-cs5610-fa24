@@ -5,6 +5,7 @@ import { Quiz } from "./types";
 import { format, parseISO } from "date-fns";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { FaClock, FaCalendarAlt, FaLock, FaEye } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 function formatDate(dateString: string) {
   try {
@@ -21,6 +22,8 @@ const QuizDetail: React.FC = () => {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+
 
   const calculateTotalPoints = (quiz: Quiz) => {
     return quiz.questions.reduce((sum, q) => sum + (q.points || 0), 0);
@@ -92,26 +95,28 @@ const QuizDetail: React.FC = () => {
             </span>
           </div>
         </div>
-        <div className="d-flex gap-2">
-          <button
-            className="btn btn-outline-primary"
-            onClick={handlePreviewQuiz}
-            title="Preview Quiz"
-          >
-            <FaEye className="me-2" />
-            Preview
-          </button>
-          <button
-            className="btn btn-outline-secondary"
-            onClick={handleEditQuiz}
-            title="Edit Quiz"
-          >
-            Edit
-          </button>
-          <button className="btn btn-outline-secondary">
-            <IoEllipsisVertical />
-          </button>
-        </div>
+        {currentUser.role === "FACULTY" && (
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-outline-primary"
+              onClick={handlePreviewQuiz}
+              title="Preview Quiz"
+            >
+              <FaEye className="me-2" />
+              Preview
+            </button>
+            <button
+              className="btn btn-outline-secondary"
+              onClick={handleEditQuiz}
+              title="Edit Quiz"
+            >
+              Edit
+            </button>
+            <button className="btn btn-outline-secondary">
+              <IoEllipsisVertical />
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="row">
@@ -164,8 +169,8 @@ const QuizDetail: React.FC = () => {
 
           {quiz.status === "published" && (
             <button
+              onClick={handlePreviewQuiz}
               className="btn btn-primary btn-lg"
-              onClick={handleStartQuiz}
             >
               Start Quiz
             </button>

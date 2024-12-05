@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteQuiz, setQuizzes } from "./reducer";
+import { deleteQuiz, setQuizStatus, setQuizzes } from "./reducer";
 import { findQuizzesForCourse } from "./client";
 import { RootState } from "../../store";
 import { BsGripVertical } from "react-icons/bs";
@@ -65,13 +65,13 @@ const QuizList: React.FC = () => {
   };
   const handleDeleteQuiz = async (quizId: string) => {
     try {
-      // Optional: Call API to delete the quiz
-      // await deleteQuizAPI(quizId); // Uncomment if you have an API integration
       dispatch(deleteQuiz(quizId)); // Remove from Redux state
     } catch (error) {
       console.error("Failed to delete quiz:", error);
     }
   };
+
+
 
   useEffect(() => {
     fetchQuizzes();
@@ -131,13 +131,13 @@ const QuizList: React.FC = () => {
                         <BsGripVertical className="me-3 text-secondary" />
                         <FaBook className="me-3 text-success" />
                         <div>
-                          {/* <Link
+                          <Link
                             to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
                             className="text-decoration-none"
                           >
                             <h6 className="mb-1">{quiz.title}</h6>
-                          </Link> */}
-                          {currentUser.role === "FACULTY" ? (
+                          </Link>
+                          {/* {currentUser.role === "FACULTY" ? (
                             <Link
                               to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
                               className="text-decoration-none"
@@ -146,12 +146,12 @@ const QuizList: React.FC = () => {
                             </Link>
                           ) : (
                             <Link
-                              to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/preview`}
+                              to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/quizDetail`}
                               className="text-decoration-none"
                             >
                               <h6 className="mb-1">{quiz.title}</h6>
                             </Link>
-                          )}
+                          )} */}
                           <div className="text-muted small">
                             <span
                               className={`me-2 ${quiz.status === "published"

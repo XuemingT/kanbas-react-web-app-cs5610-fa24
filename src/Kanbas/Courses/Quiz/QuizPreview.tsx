@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { findQuizById } from "./client";
 import { Quiz, Question } from "./types";
 import { FaClock, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const QuizPreview: React.FC = () => {
   const { cid, qid } = useParams<{ cid: string; qid: string }>();
@@ -11,6 +12,7 @@ const QuizPreview: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<string, string | boolean>
   >({});
@@ -173,10 +175,10 @@ const QuizPreview: React.FC = () => {
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h3>Preview: {quiz.title}</h3>
-        <button className="btn btn-outline-danger" onClick={handleExit}>
-          Exit Preview
-        </button>
+      {currentUser.role === "FACULTY" && (
+        <><h3>Preview: {quiz.title}</h3><button className="btn btn-outline-danger" onClick={handleExit}>
+            Exit Preview
+          </button></>)}
       </div>
 
       <div className="row">
@@ -229,13 +231,12 @@ const QuizPreview: React.FC = () => {
                 {quiz.questions.map((_, index) => (
                   <button
                     key={index}
-                    className={`btn ${
-                      currentQuestionIndex === index
+                    className={`btn ${currentQuestionIndex === index
                         ? "btn-primary"
                         : selectedAnswers[quiz.questions[index]._id]
-                        ? "btn-success"
-                        : "btn-outline-secondary"
-                    }`}
+                          ? "btn-success"
+                          : "btn-outline-secondary"
+                      }`}
                     onClick={() => setCurrentQuestionIndex(index)}
                   >
                     {index + 1}
@@ -246,13 +247,15 @@ const QuizPreview: React.FC = () => {
           </div>
 
           {/* Preview Info */}
-          <div className="alert alert-info mt-4">
-            <h6 className="alert-heading">Preview Mode</h6>
-            <p className="mb-0 small">
-              This is a preview of how students will see the quiz. Answers are
-              not saved in preview mode.
-            </p>
-          </div>
+          {currentUser.role === "FACULTY" && (
+            <div className="alert alert-info mt-4">
+              <h6 className="alert-heading">Preview Mode</h6>
+              <p className="mb-0 small">
+                This is a preview of how students will see the quiz. Answers are not
+                saved in preview mode.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
