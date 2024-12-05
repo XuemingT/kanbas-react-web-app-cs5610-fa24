@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setQuizzes } from "./reducer";
+import { deleteQuiz, setQuizzes } from "./reducer";
 import { findQuizzesForCourse } from "./client";
 import { RootState } from "../../store";
 import { BsGripVertical } from "react-icons/bs";
@@ -61,6 +61,15 @@ const QuizList: React.FC = () => {
       setError("Failed to load quizzes. Please try again later.");
     } finally {
       setLoading(false);
+    }
+  };
+  const handleDeleteQuiz = async (quizId: string) => {
+    try {
+      // Optional: Call API to delete the quiz
+      // await deleteQuizAPI(quizId); // Uncomment if you have an API integration
+      dispatch(deleteQuiz(quizId)); // Remove from Redux state
+    } catch (error) {
+      console.error("Failed to delete quiz:", error);
     }
   };
 
@@ -189,13 +198,18 @@ const QuizList: React.FC = () => {
                             </button>
                             <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                               <li>
-                                <button className="dropdown-item">Edit</button>
                                 <Link to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>
-                                  Edit Quiz
+                                  <button className="dropdown-item">Edit</button>
                                 </Link>
                               </li>
                               <li>
-                                <button className="dropdown-item">Delete</button>
+                                {/* <button className="dropdown-item">Delete</button> */}
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => handleDeleteQuiz(quiz._id)}
+                                >
+                                  Delete
+                                </button>
                               </li>
                               <li>
                                 <button className="dropdown-item">Publish</button>
