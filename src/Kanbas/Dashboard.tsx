@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-
 import {
   toggleShowAllCourses,
   enrollInCourse,
   unenrollFromCourse,
+  setEnrollments,
+  setLoading,
+  setError,
 } from "./Courses/Enrollments/reducer";
+import * as enrollmentClient from "./Courses/Enrollments/client";
 import StudentOnly from "./Account/StudentOnly";
 import FacultyOnly from "./Account/FacultyOnly";
 
@@ -25,28 +28,57 @@ export default function Dashboard({
   deleteCourse: (courseId: string) => void;
   updateCourse: () => void;
 }) {
-  // In your Dashboard.tsx, add these console logs
   const currentUser = useSelector(
     (state: any) => state.accountReducer.currentUser
   ) || { role: "STUDENT", _id: "1" };
 
-  // Add this console log
-  console.log("Current user:", currentUser);
-
-  const { enrollments, showAllCourses } = useSelector(
+  const { enrollments, showAllCourses, loading, error } = useSelector(
     (state: any) =>
-      state.enrollmentsReducer || { enrollments: [], showAllCourses: false }
+      state.enrollmentsReducer || {
+        enrollments: [],
+        showAllCourses: false,
+        loading: false,
+        error: null,
+      }
   );
 
-  // Add this console log
-  console.log("Enrollments state:", { enrollments, showAllCourses });
-
+  const [localLoading, setLocalLoading] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const dispatch = useDispatch();
 
-  // Filter courses based on enrollment status if user is student and not showing all courses
-  const displayedCourses = courses;
+  useEffect(() => {
+    const fetchEnrollments = async () => {
+      dispatch(setLoading());
+      try {
+        const data = await enrollmentClient.findEnrollmentsByUser(
+          currentUser._id
+        );
+        dispatch(setEnrollments(data));
+      } catch (err) {
+        dispatch(
+          setError(
+            err instanceof Error ? err.message : "Failed to fetch enrollments"
+          )
+        );
+      }
+    };
 
-  // Check if user is enrolled in a specific course
+    fetchEnrollments();
+  }, [dispatch, currentUser._id]);
+
+  // Filter courses based on enrollment status and showAllCourses flag
+  const displayedCourses =
+    currentUser.role === "STUDENT" && !showAllCourses
+      ? courses.filter((course) =>
+          enrollments.some(
+            (enrollment: any) =>
+              enrollment.user === currentUser._id &&
+              enrollment.course === course._id
+          )
+        )
+      : courses;
+
   const isEnrolled = (courseId: string) => {
     return enrollments.some(
       (enrollment: any) =>
@@ -54,16 +86,32 @@ export default function Dashboard({
     );
   };
 
-  // Handle enrollment toggle
-  const handleEnrollmentToggle = (
+  const handleEnrollmentToggle = async (
     courseId: string,
     event: React.MouseEvent
   ) => {
     event.preventDefault();
-    if (isEnrolled(courseId)) {
-      dispatch(unenrollFromCourse({ userId: currentUser._id, courseId }));
-    } else {
-      dispatch(enrollInCourse({ userId: currentUser._id, courseId }));
+    setLocalLoading((prev) => ({ ...prev, [courseId]: true }));
+
+    try {
+      if (isEnrolled(courseId)) {
+        await enrollmentClient.unenrollFromCourse(currentUser._id, courseId);
+        dispatch(unenrollFromCourse({ userId: currentUser._id, courseId }));
+      } else {
+        const newEnrollment = await enrollmentClient.enrollInCourse(
+          currentUser._id,
+          courseId
+        );
+        dispatch(enrollInCourse(newEnrollment));
+      }
+    } catch (err) {
+      dispatch(
+        setError(
+          err instanceof Error ? err.message : "Failed to update enrollment"
+        )
+      );
+    } finally {
+      setLocalLoading((prev) => ({ ...prev, [courseId]: false }));
     }
   };
 
@@ -71,24 +119,41 @@ export default function Dashboard({
     <div id="wd-dashboard">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div>
-          {" "}
-          {/* Wrap the h1 in a div */}
           <h1 id="wd-dashboard-title">Dashboard</h1>
         </div>
-        <div className="ms-auto">
-          {" "}
-          {/* Add this div with ms-auto class */}
-          <StudentOnly>
-            <button
-              className="btn btn-primary"
-              onClick={() => dispatch(toggleShowAllCourses())}
-            >
-              {showAllCourses ? "Show My Courses" : "Enrollments"}
-            </button>
-          </StudentOnly>
-        </div>
+        {currentUser.role === "STUDENT" && (
+          <div className="ms-auto">
+            <StudentOnly>
+              {loading ? (
+                <button className="btn btn-primary" disabled>
+                  <span className="spinner-border spinner-border-sm me-2" />
+                  Loading...
+                </button>
+              ) : (
+                <button
+                  className="btn btn-primary"
+                  onClick={() => dispatch(toggleShowAllCourses())}
+                >
+                  {showAllCourses ? "Show My Courses" : "Enrollments"}
+                </button>
+              )}
+            </StudentOnly>
+          </div>
+        )}
       </div>
+
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+          <button
+            className="btn-close float-end"
+            onClick={() => dispatch(setError(null))}
+          />
+        </div>
+      )}
+
       <hr />
+
       <FacultyOnly>
         <h5>
           New Course
@@ -121,10 +186,17 @@ export default function Dashboard({
         />
         <hr />
       </FacultyOnly>
+
       <h2 id="wd-dashboard-published">
-        Published Courses ({displayedCourses.length})
-      </h2>{" "}
+        {currentUser.role === "STUDENT"
+          ? showAllCourses
+            ? "Available Courses"
+            : "My Courses"
+          : "Published Courses"}{" "}
+        ({displayedCourses.length})
+      </h2>
       <hr />
+
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
           {displayedCourses.map((course) => (
@@ -205,8 +277,20 @@ export default function Dashboard({
                               : "btn-success"
                           } float-end`}
                           onClick={(e) => handleEnrollmentToggle(course._id, e)}
+                          disabled={localLoading[course._id]}
                         >
-                          {isEnrolled(course._id) ? "Unenroll" : "Enroll"}
+                          {localLoading[course._id] ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm me-2" />
+                              {isEnrolled(course._id)
+                                ? "Unenrolling..."
+                                : "Enrolling..."}
+                            </>
+                          ) : isEnrolled(course._id) ? (
+                            "Unenroll"
+                          ) : (
+                            "Enroll"
+                          )}
                         </button>
                       </>
                     )}

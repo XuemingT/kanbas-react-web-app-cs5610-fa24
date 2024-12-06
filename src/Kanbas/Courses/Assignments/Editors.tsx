@@ -1,19 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addAssignment, updateAssignment } from "./reducer";
-
-// Define types inline since there might be import issues
-interface Assignment {
-  _id?: string;
-  title: string;
-  description: string;
-  points: number;
-  dueDate: string;
-  availableFrom: string;
-  untilDate: string;
-  course: string;
-}
+import * as client from "./client";
+import { Assignment } from "./types";
 
 interface AssignmentsState {
   assignmentsReducer: {
@@ -25,6 +15,8 @@ export default function AssignmentEditor() {
   const { cid = "", aid } = useParams<Record<string, string>>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const assignment = useSelector((state: AssignmentsState) =>
     aid
@@ -48,6 +40,28 @@ export default function AssignmentEditor() {
     assignment || initialFormData
   );
 
+  // Fetch assignment data when editing existing assignment
+  useEffect(() => {
+    const fetchAssignment = async () => {
+      if (!aid) return;
+
+      setLoading(true);
+      setError(null);
+      try {
+        const assignmentData = await client.findAssignmentById(aid);
+        setFormData(assignmentData);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch assignment"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssignment();
+  }, [aid]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
@@ -58,19 +72,59 @@ export default function AssignmentEditor() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
-    if (aid) {
-      dispatch(updateAssignment({ ...formData, _id: aid }));
-    } else {
-      dispatch(addAssignment(formData));
+    setLoading(true);
+    setError(null);
+
+    try {
+      if (aid) {
+        // Update existing assignment
+        const updatedAssignment = await client.updateAssignment({
+          ...formData,
+          _id: aid,
+        });
+        dispatch(updateAssignment(updatedAssignment));
+      } else {
+        // Create new assignment
+        const newAssignment = await client.createAssignment(cid, formData);
+        dispatch(addAssignment(newAssignment));
+      }
+      navigate(`/Kanbas/Courses/${cid}/Assignments`);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to save assignment"
+      );
+      setLoading(false);
     }
-    navigate(`/Kanbas/Courses/${cid}/Assignments`);
   };
+
+  if (loading && !formData.title) {
+    return <div className="p-4">Loading assignment...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-4">
+        <div className="alert alert-danger">
+          Error: {error}
+          <button
+            className="btn btn-outline-danger ms-2"
+            onClick={() => setError(null)}
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div id="wd-assignments-editor" className="p-4">
       <h2 className="mb-4">{aid ? "Edit Assignment" : "New Assignment"}</h2>
+      {error && <div className="alert alert-danger mb-3">{error}</div>}
       <form onSubmit={handleSubmit}>
         {/* Assignment Name */}
         <div className="mb-3">
@@ -86,6 +140,7 @@ export default function AssignmentEditor() {
             className="form-control"
             required
             placeholder="Enter assignment name"
+            disabled={loading}
           />
         </div>
 
@@ -102,6 +157,7 @@ export default function AssignmentEditor() {
             className="form-control"
             rows={5}
             placeholder="Enter assignment description"
+            disabled={loading}
           />
         </div>
 
@@ -123,6 +179,7 @@ export default function AssignmentEditor() {
               required
               min="0"
               max="100"
+              disabled={loading}
             />
           </div>
         </div>
@@ -147,6 +204,7 @@ export default function AssignmentEditor() {
                 onChange={handleInputChange}
                 className="form-control"
                 required
+                disabled={loading}
               />
             </div>
           </div>
@@ -167,6 +225,7 @@ export default function AssignmentEditor() {
                 onChange={handleInputChange}
                 className="form-control"
                 required
+                disabled={loading}
               />
             </div>
           </div>
@@ -187,6 +246,7 @@ export default function AssignmentEditor() {
                 onChange={handleInputChange}
                 className="form-control"
                 required
+                disabled={loading}
               />
             </div>
           </div>
@@ -200,8 +260,17 @@ export default function AssignmentEditor() {
           >
             Cancel
           </Link>
-          <button type="submit" className="btn btn-danger">
-            {aid ? "Save" : "Create"}
+          <button type="submit" className="btn btn-danger" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" />
+                {aid ? "Saving..." : "Creating..."}
+              </>
+            ) : aid ? (
+              "Save"
+            ) : (
+              "Create"
+            )}
           </button>
         </div>
       </form>

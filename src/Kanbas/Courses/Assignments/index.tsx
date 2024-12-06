@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, Link } from "react-router-dom";
 import AssignmentCheck from "./AssignmentCheck";
@@ -7,39 +7,85 @@ import { BsGripVertical } from "react-icons/bs";
 import { FaBook, FaTrash } from "react-icons/fa";
 import FacultyOnly from "../../Account/FacultyOnly";
 import AssignmentsControlButton from "./AssignmentsControlButton";
-import { deleteAssignment } from "./reducer";
+import {
+  deleteAssignment,
+  setAssignments,
+  setLoading,
+  setError,
+} from "./reducer";
+import * as client from "./client";
 import { Assignment } from "./types";
+
 interface AssignmentsState {
   assignmentsReducer: {
     assignments: Assignment[];
+    loading: boolean;
+    error: string | null;
   };
 }
 
 export default function Assignments() {
   const { cid } = useParams<{ cid: string }>();
+  const dispatch = useDispatch();
   const [assignmentToDelete, setAssignmentToDelete] = useState<string | null>(
     null
   );
   const [showModal, setShowModal] = useState(false);
 
-  const assignments = useSelector(
-    (state: AssignmentsState) => state.assignmentsReducer.assignments || []
-  ).filter((assignment) => assignment.course === cid);
+  const { assignments, loading, error } = useSelector(
+    (state: AssignmentsState) => state.assignmentsReducer
+  );
 
-  const dispatch = useDispatch();
+  const courseAssignments = assignments.filter(
+    (assignment) => assignment.course === cid
+  );
 
-  const handleDelete = (assignmentId: string) => {
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      dispatch(setLoading());
+      try {
+        const data = await client.findAssignmentsForCourse(cid as string);
+        dispatch(setAssignments(data));
+      } catch (err) {
+        dispatch(
+          setError(err instanceof Error ? err.message : "An error occurred")
+        );
+      }
+    };
+
+    if (cid) {
+      fetchAssignments();
+    }
+  }, [cid, dispatch]);
+
+  const handleDelete = async (assignmentId: string) => {
     setAssignmentToDelete(assignmentId);
     setShowModal(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (assignmentToDelete) {
-      dispatch(deleteAssignment(assignmentToDelete));
+      dispatch(setLoading());
+      try {
+        await client.deleteAssignment(assignmentToDelete);
+        dispatch(deleteAssignment(assignmentToDelete));
+      } catch (err) {
+        dispatch(
+          setError(err instanceof Error ? err.message : "An error occurred")
+        );
+      }
       setAssignmentToDelete(null);
+      setShowModal(false);
     }
-    setShowModal(false);
   };
+
+  if (loading) {
+    return <div className="p-4">Loading assignments...</div>;
+  }
+
+  if (error) {
+    return <div className="p-4 text-danger">Error: {error}</div>;
+  }
 
   return (
     <div id="wd-assignments" className="px-4">
