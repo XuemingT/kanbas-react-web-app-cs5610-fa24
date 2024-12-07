@@ -10,12 +10,12 @@ import Courses from "./Courses";
 import { useState, useEffect } from "react"; // Added useEffect
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./Account/ProtectedRoute";
-import FacultyOnly from "./Account/FacultyOnly";
 
 export default function Kanbas() {
   const [courses, setCourses] = useState<any[]>([]);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const fetchCourses = async () => {
+    // Only fetch if we have a currentUser
     try {
       const courses = await userClient.findMyCourses();
       setCourses(courses);

@@ -7,6 +7,7 @@ import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
 import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editors";
 import PeopleTable from "./People/Table";
+
 export default function Courses({ courses }: { courses: any[] }) {
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
