@@ -196,16 +196,16 @@ const QuizList: React.FC = () => {
                             </div>
                             {quiz.dueDate && (
                               <>
-                                | <strong>Due</strong>{" "}
+                                | <strong>Due: </strong>{" "}
                                 {formatDate(quiz.dueDate)}
                               </>
                             )}
-                            | <strong>Points</strong>{" "}
-                            {calculateTotalPoints(quiz)}
+                            | {calculateTotalPoints(quiz)} Points
+                            | {quiz.questions.length} Questions
                           </div>
                           <div className="text-muted small mt-1">
-                            Available from {formatDate(quiz.availableFrom)}{" "}
-                            until {formatDate(quiz.until)}
+                            Available from: {formatDate(quiz.availableFrom)}{" "}
+                            until: {formatDate(quiz.until)}
                           </div>
                         </div>
                       </div>
