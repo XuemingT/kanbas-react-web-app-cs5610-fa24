@@ -160,9 +160,10 @@ const QuizDetail: React.FC = () => {
               <div className="mt-4">
                 <h6>Points: {calculateTotalPoints(quiz)}</h6>
                 <h6>Questions: {quiz.questions.length}</h6>
-                {quiz.multipleAttempts && (
+                {/* {quiz.multipleAttempts && (
                   <h6>Allowed Attempts: {quiz.attempts}</h6>
-                )}
+                )} */}
+                 <h6>Allowed Attempts: {quiz.multipleAttempts ? quiz.attempts : 1}</h6>
               </div>
             </div>
           </div>
