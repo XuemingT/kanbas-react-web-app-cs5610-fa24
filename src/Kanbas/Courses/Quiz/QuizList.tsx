@@ -190,7 +190,7 @@ const QuizList: React.FC = () => {
                                   onClick={() => handlePublishToggle(quiz._id, quiz.status)}
                                   title={quiz.status === "published" ? "Unpublish Quiz" : "Publish Quiz"}
                                 >
-                                  {quiz.status === "published" ? "✓ Published" : <FaBan />} {/* Display 🚫 for "Not Published" */}
+                                  {quiz.status === "published" ? "✓" : <FaBan />} {/* Display 🚫 for "Not Published" */}
                                 </span>
                               </div>
                             </div>
