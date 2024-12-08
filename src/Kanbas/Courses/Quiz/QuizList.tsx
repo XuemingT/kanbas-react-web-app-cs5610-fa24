@@ -6,7 +6,7 @@ import { findQuizzesForCourse, updateQuizStatus } from "./client";
 import { RootState } from "../../store";
 import { BsGripVertical } from "react-icons/bs";
 import { IoEllipsisVertical } from "react-icons/io5";
-import { FaBook } from "react-icons/fa";
+import { FaBan, FaBook } from "react-icons/fa";
 import QuizControlButton from "./QuizControlButton";
 import { format, parseISO } from "date-fns";
 import { Quiz } from "./types";
@@ -108,11 +108,11 @@ const QuizList: React.FC = () => {
   // };
   const handlePublishToggle = async (quizId: string, currentStatus: string) => {
     const newStatus = currentStatus === "published" ? "draft" : "published";
-  
+
     try {
       // Call the API to update the status
       const updatedQuiz = await updateQuizStatus(quizId, newStatus);
-  
+
       // Update Redux state with the new status
       dispatch(setQuizStatus({ quizId, status: updatedQuiz.status }));
     } catch (error) {
@@ -171,8 +171,8 @@ const QuizList: React.FC = () => {
                               <h6 className="mb-1">{quiz.title}</h6>
                             </Link>
                           )} */}
-                          <div className="text-muted small">
-                            <span
+                          <div className="text-muted small d-flex align-items-center">
+                            {/* <span
                               className={`me-2 ${quiz.status === "published"
                                 ? "text-success"
                                 : "text-danger"
@@ -181,7 +181,19 @@ const QuizList: React.FC = () => {
                               {quiz.status === "published"
                                 ? "✓ Published"
                                 : "Not Published"}
-                            </span>
+                            </span> */}
+                            <div className="text-muted small">
+                              <div className="text-muted small">
+                                <span
+                                  className={`me-2 ${quiz.status === "published" ? "text-success" : "text-danger"}`}
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => handlePublishToggle(quiz._id, quiz.status)}
+                                  title={quiz.status === "published" ? "Unpublish Quiz" : "Publish Quiz"}
+                                >
+                                  {quiz.status === "published" ? "✓ Published" : <FaBan />} {/* Display 🚫 for "Not Published" */}
+                                </span>
+                              </div>
+                            </div>
                             {quiz.dueDate && (
                               <>
                                 | <strong>Due</strong>{" "}
@@ -235,12 +247,20 @@ const QuizList: React.FC = () => {
                                   {quiz.status === "published" ? "Unpublish" : "Publish"}
                                 </button>
                               </li> */}
-                              <li>
+                              {/* <li>
                                 <button
                                   className="dropdown-item"
                                   onClick={() =>
                                     handlePublishToggle(quiz._id, quiz.status === "published" ? "draft" : "published")
                                   }
+                                >
+                                  {quiz.status === "published" ? "Unpublish" : "Publish"}
+                                </button>
+                              </li> */}
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => handlePublishToggle(quiz._id, quiz.status)}
                                 >
                                   {quiz.status === "published" ? "Unpublish" : "Publish"}
                                 </button>
