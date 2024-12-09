@@ -28,9 +28,7 @@ export default function Dashboard({
   deleteCourse: (courseId: string) => void;
   updateCourse: () => void;
 }) {
-  const currentUser = useSelector(
-    (state: any) => state.accountReducer.currentUser
-  ) || { role: "STUDENT", _id: "1" };
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
   const { enrollments, showAllCourses, loading, error } = useSelector(
     (state: any) =>

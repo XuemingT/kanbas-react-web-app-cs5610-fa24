@@ -15,7 +15,6 @@ export default function Kanbas() {
   const [courses, setCourses] = useState<any[]>([]);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const fetchCourses = async () => {
-    // Only fetch if we have a currentUser
     try {
       const courses = await userClient.findMyCourses();
       setCourses(courses);
