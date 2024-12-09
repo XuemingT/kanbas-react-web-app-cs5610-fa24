@@ -186,7 +186,8 @@ const QuizList: React.FC = () => {
                                 ? "✓ Published"
                                 : "Not Published"}
                             </span> */}
-                            <div className="text-muted small">
+                            {currentUser.role === "FACULTY" ? (
+                              // For faculty: show clickable status toggle
                               <div className="text-muted small">
                                 <span
                                   className={`me-2 ${
@@ -208,11 +209,25 @@ const QuizList: React.FC = () => {
                                     "✓"
                                   ) : (
                                     <FaBan />
-                                  )}{" "}
-                                  {/* Display 🚫 for "Not Published" */}
+                                  )}
                                 </span>
                               </div>
-                            </div>
+                            ) : (
+                              // For students: just show the status without interaction
+                              <div className="text-muted small">
+                                <span
+                                  className={`me-2 ${
+                                    quiz.status === "published"
+                                      ? "text-success"
+                                      : "text-danger"
+                                  }`}
+                                >
+                                  {quiz.status === "published"
+                                    ? "Published"
+                                    : "Not Published"}
+                                </span>
+                              </div>
+                            )}
                             {quiz.dueDate && (
                               <>
                                 | <strong>Due: </strong>{" "}
@@ -260,7 +275,6 @@ const QuizList: React.FC = () => {
                                 </Link>
                               </li>
                               <li>
-                                {/* <button className="dropdown-item">Delete</button> */}
                                 <button
                                   className="dropdown-item"
                                   onClick={() => handleDeleteQuiz(quiz._id)}
@@ -268,21 +282,6 @@ const QuizList: React.FC = () => {
                                   Delete
                                 </button>
                               </li>
-                              {/* <li>
-                                <button className="dropdown-item">
-                                  {quiz.status === "published" ? "Unpublish" : "Publish"}
-                                </button>
-                              </li> */}
-                              {/* <li>
-                                <button
-                                  className="dropdown-item"
-                                  onClick={() =>
-                                    handlePublishToggle(quiz._id, quiz.status === "published" ? "draft" : "published")
-                                  }
-                                >
-                                  {quiz.status === "published" ? "Unpublish" : "Publish"}
-                                </button>
-                              </li> */}
                               <li>
                                 <button
                                   className="dropdown-item"

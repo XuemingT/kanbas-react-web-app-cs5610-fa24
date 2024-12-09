@@ -35,3 +35,23 @@ export interface Quiz {
   points: number;
   howManyAttempts?: number;
 }
+
+// Add these interfaces to your types.ts
+export interface QuizAnswer {
+  questionId: string;
+  answer: string | boolean;
+  isCorrect: boolean;
+}
+
+export interface QuizAttempt {
+  _id: string;
+  quizId: string;
+  userId: string;
+  userRole: "FACULTY" | "STUDENT";
+  answers: QuizAnswer[];
+  score: number;
+  totalPoints: number;
+  startTime: string;
+  endTime: string;
+  isPreview?: boolean;
+}

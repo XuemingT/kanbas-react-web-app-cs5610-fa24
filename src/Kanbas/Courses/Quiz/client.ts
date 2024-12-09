@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Quiz, Question } from "./types";
+import { Quiz, Question, QuizAttempt } from "./types";
 const REMOTE_SERVER =
   process.env.REACT_APP_REMOTE_SERVER || "http://localhost:4000";
 const QUIZZES_API = `${REMOTE_SERVER}/api/quizzes`;
@@ -82,5 +82,34 @@ export const updateQuizStatus = async (quizId: string, status: string) => {
   const response = await axios.put(`${QUIZZES_API}/${quizId}/status`, {
     status,
   });
+  return response.data;
+};
+// for quiz attempt
+export const createQuizAttempt = async (
+  quizId: string,
+  attemptData: Partial<QuizAttempt>
+) => {
+  const response = await axios.post(
+    `${QUIZZES_API}/${quizId}/attempts`,
+    attemptData
+  );
+  return response.data;
+};
+
+export const getUserAttempts = async (quizId: string, userId: string) => {
+  const response = await axios.get(
+    `${QUIZZES_API}/${quizId}/attempts/${userId}`
+  );
+  return response.data;
+};
+
+export const submitQuizAttempt = async (
+  attemptId: string,
+  data: Partial<QuizAttempt>
+) => {
+  const response = await axios.put(
+    `${QUIZZES_API}/attempts/${attemptId}`,
+    data
+  );
   return response.data;
 };
