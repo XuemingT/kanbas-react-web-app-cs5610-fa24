@@ -12,7 +12,7 @@ import {
 import * as enrollmentClient from "./Courses/Enrollments/client";
 import StudentOnly from "./Account/StudentOnly";
 import FacultyOnly from "./Account/FacultyOnly";
-
+import * as courseClient from "./Courses/client";
 export default function Dashboard({
   courses,
   course,
