@@ -39,6 +39,7 @@ export const updateQuiz = async (quizId: string, quiz: any) => {
 
 // Delete quiz
 export const deleteQuiz = async (quizId: string) => {
+  console.log("Deleting quiz with ID:", quizId); // Add this for debugging
   const response = await axios.delete(`${QUIZZES_API}/${quizId}`);
   return response.data;
 };

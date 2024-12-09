@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteQuiz, setQuizStatus, setQuizzes, updateQuiz } from "./reducer";
+import { setQuizStatus, setQuizzes, updateQuiz } from "./reducer";
+import { deleteQuiz } from "./reducer";
+import { deleteQuiz as deleteQuizAPI } from "./client";
 import { findQuizzesForCourse, updateQuizStatus } from "./client";
 import { RootState } from "../../store";
 import { BsGripVertical } from "react-icons/bs";
@@ -27,7 +29,6 @@ const QuizList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-
 
   const allQuizzes = useSelector((state: RootState) =>
     state.quizzesReducer.quizzes.filter((quiz) => quiz.course === cid)
@@ -65,13 +66,16 @@ const QuizList: React.FC = () => {
   };
   const handleDeleteQuiz = async (quizId: string) => {
     try {
-      dispatch(deleteQuiz(quizId)); // Remove from Redux state
+      // Make the API call first using the API function
+      await deleteQuizAPI(quizId);
+      // Then update Redux state using the action creator
+      dispatch(deleteQuiz(quizId));
+      // Finally refresh the quiz list
+      await fetchQuizzes();
     } catch (error) {
-      console.error("Failed to delete quiz:", error);
+      console.log("Error deleting quiz:", error);
     }
   };
-
-
 
   useEffect(() => {
     fetchQuizzes();
@@ -141,9 +145,9 @@ const QuizList: React.FC = () => {
                   <li
                     key={quiz._id}
                     className="list-group-item p-4 border-start-0 border-end-0"
-                  // style={{
-                  //   borderLeft: "4px solid green",
-                  // }}
+                    // style={{
+                    //   borderLeft: "4px solid green",
+                    // }}
                   >
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="d-flex align-items-center">
@@ -185,12 +189,27 @@ const QuizList: React.FC = () => {
                             <div className="text-muted small">
                               <div className="text-muted small">
                                 <span
-                                  className={`me-2 ${quiz.status === "published" ? "text-success" : "text-danger"}`}
+                                  className={`me-2 ${
+                                    quiz.status === "published"
+                                      ? "text-success"
+                                      : "text-danger"
+                                  }`}
                                   style={{ cursor: "pointer" }}
-                                  onClick={() => handlePublishToggle(quiz._id, quiz.status)}
-                                  title={quiz.status === "published" ? "Unpublish Quiz" : "Publish Quiz"}
+                                  onClick={() =>
+                                    handlePublishToggle(quiz._id, quiz.status)
+                                  }
+                                  title={
+                                    quiz.status === "published"
+                                      ? "Unpublish Quiz"
+                                      : "Publish Quiz"
+                                  }
                                 >
-                                  {quiz.status === "published" ? "✓" : <FaBan />} {/* Display 🚫 for "Not Published" */}
+                                  {quiz.status === "published" ? (
+                                    "✓"
+                                  ) : (
+                                    <FaBan />
+                                  )}{" "}
+                                  {/* Display 🚫 for "Not Published" */}
                                 </span>
                               </div>
                             </div>
@@ -200,8 +219,8 @@ const QuizList: React.FC = () => {
                                 {formatDate(quiz.dueDate)}
                               </>
                             )}
-                            | {calculateTotalPoints(quiz)} Points
-                            | {quiz.questions.length} Questions
+                            | {calculateTotalPoints(quiz)} Points |{" "}
+                            {quiz.questions.length} Questions
                           </div>
                           <div className="text-muted small mt-1">
                             Available from: {formatDate(quiz.availableFrom)}{" "}
@@ -227,10 +246,17 @@ const QuizList: React.FC = () => {
                             >
                               <IoEllipsisVertical />
                             </button>
-                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <ul
+                              className="dropdown-menu"
+                              aria-labelledby="dropdownMenuButton"
+                            >
                               <li>
-                                <Link to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>
-                                  <button className="dropdown-item">Edit</button>
+                                <Link
+                                  to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
+                                >
+                                  <button className="dropdown-item">
+                                    Edit
+                                  </button>
                                 </Link>
                               </li>
                               <li>
@@ -260,9 +286,13 @@ const QuizList: React.FC = () => {
                               <li>
                                 <button
                                   className="dropdown-item"
-                                  onClick={() => handlePublishToggle(quiz._id, quiz.status)}
+                                  onClick={() =>
+                                    handlePublishToggle(quiz._id, quiz.status)
+                                  }
                                 >
-                                  {quiz.status === "published" ? "Unpublish" : "Publish"}
+                                  {quiz.status === "published"
+                                    ? "Unpublish"
+                                    : "Publish"}
                                 </button>
                               </li>
                               <li>
