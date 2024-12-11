@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { IoEllipsisVertical } from "react-icons/io5";
 import QuizQuestions from "./QuizQuestions";
 import { findQuizById, updateQuiz, createQuiz } from "./client";
-import { Quiz } from "./types";
+import { Quiz, Question } from "./types";
 
 function formatDateForInput(dateString: string | number | Date) {
   const date = new Date(dateString);
@@ -23,13 +23,43 @@ export default function QuizEditor() {
   const [quizData, setQuizData] = useState<Quiz | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [questions, setQuestions] = useState<Question[]>([]);
 
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
         setLoading(true);
-        const quiz = await findQuizById(qid as string);
-        setQuizData(quiz);
+        if (qid !== "new") {
+          const quiz = await findQuizById(qid as string);
+          setQuizData(quiz);
+          setQuestions(quiz.questions || []);
+          setTotalPoints(calculateTotalPoints(quiz.questions));
+        } else {
+          // Create a default quiz structure
+          const defaultQuiz: Partial<Quiz> = {
+            title: "New Quiz",
+            description: "",
+            course: cid,
+            status: "draft",
+            quizType: "Graded Quiz",
+            assignmentGroup: "Quizzes",
+            shuffleAnswers: true,
+            timeLimit: 20,
+            multipleAttempts: false,
+            attempts: 1,
+            showCorrectAnswers: "After Submission",
+            accessCode: "",
+            oneQuestionAtATime: true,
+            webcamRequired: false,
+            lockQuestionsAfterAnswering: false,
+            dueDate: new Date().toISOString(),
+            availableFrom: new Date().toISOString(),
+            until: new Date().toISOString(),
+            questions: [],
+            points: 0,
+          };
+          setQuizData(defaultQuiz as Quiz);
+        }
       } catch (error) {
         console.error("Error fetching quiz:", error);
         setError("Failed to load quiz data");
@@ -39,17 +69,40 @@ export default function QuizEditor() {
     };
 
     fetchQuiz();
-  }, [qid]);
+  }, [qid, cid]);
+
+  const calculateTotalPoints = (questions: Question[]) => {
+    return questions.reduce((sum, question) => sum + (question.points || 0), 0);
+  };
+
+  const handleQuestionUpdate = (updatedQuestions: Question[]) => {
+    if (quizData) {
+      const totalPoints = calculateTotalPoints(updatedQuestions);
+      setQuestions(updatedQuestions);
+      setQuizData({
+        ...quizData,
+        questions: updatedQuestions,
+        points: totalPoints,
+      });
+      setTotalPoints(totalPoints);
+    }
+  };
 
   const handleSave = async () => {
     if (!quizData) return;
     try {
       setLoading(true);
+      const updatedQuizData = {
+        ...quizData,
+        questions: questions,
+        points: totalPoints,
+      };
+
       if (qid === "new") {
-        const newQuiz = await createQuiz(cid as string, quizData);
+        const newQuiz = await createQuiz(cid as string, updatedQuizData);
         navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuiz._id}`);
       } else {
-        await updateQuiz(qid as string, quizData);
+        await updateQuiz(qid as string, updatedQuizData);
         navigate(`/Kanbas/Courses/${cid}/Quizzes`);
       }
     } catch (error) {
@@ -63,7 +116,13 @@ export default function QuizEditor() {
   const handleSaveAndPublish = async () => {
     if (!quizData) return;
     try {
-      await updateQuiz(qid as string, { ...quizData, status: "published" });
+      const updatedQuizData = {
+        ...quizData,
+        questions: questions,
+        points: totalPoints,
+        status: "published",
+      };
+      await updateQuiz(qid as string, updatedQuizData);
       navigate(`/Kanbas/Courses/${cid}/Quizzes`);
     } catch (error) {
       setError("Failed to publish quiz");
@@ -335,6 +394,7 @@ export default function QuizEditor() {
           onPointsUpdate={setTotalPoints}
           onSave={handleSave}
           onCancel={handleCancel}
+          onQuestionsUpdate={handleQuestionUpdate}
         />
       )}
     </div>
