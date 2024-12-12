@@ -32,6 +32,8 @@ const QuizPreview: React.FC = () => {
   );
   const [submitted, setSubmitted] = useState(false);
   const [attemptScore, setAttemptScore] = useState<number | null>(null);
+  const [userAttempts, setUserAttempts] = useState<QuizAttempt[]>([]);
+  const [canAttemptQuiz, setCanAttemptQuiz] = useState(true);
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -40,19 +42,30 @@ const QuizPreview: React.FC = () => {
         const quizData = await findQuizById(qid as string);
         setQuiz(quizData);
 
-        // Load previous attempt if exists
         if (currentUser) {
           const attempts: QuizAttempt[] = await getUserAttempts(
             qid as string,
             currentUser._id
           );
+          setUserAttempts(attempts);
+
+          // Check if user can make another attempt
+          const canAttempt =
+            currentUser.role === "FACULTY" ||
+            (quizData.multipleAttempts
+              ? attempts.length < quizData.attempts
+              : attempts.length < 1);
+          setCanAttemptQuiz(canAttempt);
+
+          // Load latest attempt if exists
           if (attempts.length > 0) {
-            setCurrentAttempt(attempts[0]);
+            const lastAttempt = attempts[attempts.length - 1];
+            setCurrentAttempt(lastAttempt);
             const answerMap = Object.fromEntries(
-              attempts[0].answers.map((ans) => [ans.questionId, ans.answer])
+              lastAttempt.answers.map((ans) => [ans.questionId, ans.answer])
             );
             setSelectedAnswers(answerMap);
-            setAttemptScore(attempts[0].score);
+            setAttemptScore(lastAttempt.score);
             setSubmitted(true);
           }
         }
@@ -65,6 +78,27 @@ const QuizPreview: React.FC = () => {
     };
     loadQuiz();
   }, [qid, currentUser]);
+
+  const startNewAttempt = async () => {
+    if (!quiz || !currentUser) return;
+
+    // Recheck attempt limit
+    const attempts = await getUserAttempts(qid as string, currentUser._id);
+    const maxAttempts = quiz.multipleAttempts ? quiz.attempts : 1;
+
+    if (attempts.length >= maxAttempts) {
+      setError("Maximum attempts reached");
+      return;
+    }
+
+    // If within attempt limit, proceed
+    setSelectedAnswers({});
+    setCurrentAttempt(null);
+    setSubmitted(false);
+    setAttemptScore(null);
+    setCurrentQuestionIndex(0);
+    setError(null);
+  };
 
   const handleSubmit = async () => {
     if (!quiz || !currentUser) return;
@@ -101,6 +135,14 @@ const QuizPreview: React.FC = () => {
         const newAttempt = await createQuizAttempt(quiz._id, attemptData);
         setCurrentAttempt(newAttempt);
       }
+
+      // Add this section to update attempts count
+      const updatedAttempts = await getUserAttempts(
+        qid as string,
+        currentUser._id
+      );
+      setUserAttempts(updatedAttempts);
+
       setAttemptScore(score);
       setSubmitted(true);
     } catch (error) {
@@ -288,22 +330,24 @@ const QuizPreview: React.FC = () => {
                 {quiz.questions.reduce((sum, q) => sum + (q.points || 0), 0)}
               </h4>
               <p className="text-muted">
-                Percentage:{" "}
-                {(
-                  ((attemptScore || 0) /
-                    quiz.questions.reduce(
-                      (sum, q) => sum + (q.points || 0),
-                      0
-                    )) *
-                  100
-                ).toFixed(1)}
-                %
+                Attempts Used: {userAttempts.length} of{" "}
+                {quiz?.multipleAttempts ? quiz.attempts : 1}
               </p>
+              {userAttempts.length <
+                (quiz?.multipleAttempts ? quiz.attempts : 1) &&
+                currentUser.role === "STUDENT" && (
+                  <button
+                    className="btn btn-primary mt-3"
+                    onClick={startNewAttempt}
+                  >
+                    Start New Attempt
+                  </button>
+                )}
+              {error && <div className="alert alert-danger mt-3">{error}</div>}
             </div>
           </div>
         </div>
       )}
-
       <div className="row">
         <div className="col-md-8">
           <div className="card mb-4">
