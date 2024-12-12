@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  toggleShowAllCourses,
-  enrollInCourse,
-  unenrollFromCourse,
-  setEnrollments,
-  setLoading,
-  setError,
-} from "./Courses/Enrollments/reducer";
-import * as enrollmentClient from "./Courses/Enrollments/client";
-import StudentOnly from "./Account/StudentOnly";
+
 import FacultyOnly from "./Account/FacultyOnly";
-import * as courseClient from "./Courses/client";
+
 export default function Dashboard({
   courses,
   course,
@@ -20,6 +11,9 @@ export default function Dashboard({
   addNewCourse,
   deleteCourse,
   updateCourse,
+  enrolling,
+  setEnrolling,
+  updateEnrollment,
 }: {
   courses: any[];
   course: any;
@@ -27,6 +21,9 @@ export default function Dashboard({
   addNewCourse: () => void;
   deleteCourse: (courseId: string) => void;
   updateCourse: () => void;
+  enrolling: boolean;
+  setEnrolling: (enrolling: boolean) => void;
+  updateEnrollment: (courseId: string, enrolled: boolean) => void;
 }) {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
 
@@ -44,26 +41,6 @@ export default function Dashboard({
     {}
   );
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const fetchEnrollments = async () => {
-      dispatch(setLoading());
-      try {
-        const data = await enrollmentClient.findEnrollmentsByUser(
-          currentUser._id
-        );
-        dispatch(setEnrollments(data));
-      } catch (err) {
-        dispatch(
-          setError(
-            err instanceof Error ? err.message : "Failed to fetch enrollments"
-          )
-        );
-      }
-    };
-
-    fetchEnrollments();
-  }, [dispatch, currentUser._id]);
 
   // Filter courses based on enrollment status and showAllCourses flag
   const displayedCourses =
@@ -84,71 +61,21 @@ export default function Dashboard({
     );
   };
 
-  const handleEnrollmentToggle = async (
-    courseId: string,
-    event: React.MouseEvent
-  ) => {
-    event.preventDefault();
-    setLocalLoading((prev) => ({ ...prev, [courseId]: true }));
-
-    try {
-      if (isEnrolled(courseId)) {
-        await enrollmentClient.unenrollFromCourse(currentUser._id, courseId);
-        dispatch(unenrollFromCourse({ userId: currentUser._id, courseId }));
-      } else {
-        const newEnrollment = await enrollmentClient.enrollInCourse(
-          currentUser._id,
-          courseId
-        );
-        dispatch(enrollInCourse(newEnrollment));
-      }
-    } catch (err) {
-      dispatch(
-        setError(
-          err instanceof Error ? err.message : "Failed to update enrollment"
-        )
-      );
-    } finally {
-      setLocalLoading((prev) => ({ ...prev, [courseId]: false }));
-    }
-  };
-
   return (
     <div id="wd-dashboard">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h1 id="wd-dashboard-title">Dashboard</h1>
+          <h1 id="wd-dashboard-title">
+            Dashboard
+            <button
+              onClick={() => setEnrolling(!enrolling)}
+              className="float-end btn btn-primary"
+            >
+              {enrolling ? "My Courses" : "All Courses"}
+            </button>
+          </h1>
         </div>
-        {currentUser.role === "STUDENT" && (
-          <div className="ms-auto">
-            <StudentOnly>
-              {loading ? (
-                <button className="btn btn-primary" disabled>
-                  <span className="spinner-border spinner-border-sm me-2" />
-                  Loading...
-                </button>
-              ) : (
-                <button
-                  className="btn btn-primary"
-                  onClick={() => dispatch(toggleShowAllCourses())}
-                >
-                  {showAllCourses ? "Show My Courses" : "Enrollments"}
-                </button>
-              )}
-            </StudentOnly>
-          </div>
-        )}
       </div>
-
-      {error && (
-        <div className="alert alert-danger" role="alert">
-          {error}
-          <button
-            className="btn-close float-end"
-            onClick={() => dispatch(setError(null))}
-          />
-        </div>
-      )}
 
       <hr />
 
@@ -230,6 +157,20 @@ export default function Dashboard({
                   />
                   <div className="card-body">
                     <h5 className="wd-dashboard-course-title card-title">
+                      {enrolling && (
+                        <button
+                          onClick={(event) => {
+                            event.preventDefault();
+                            updateEnrollment(course._id, !course.enrolled);
+                          }}
+                          className={`btn ${
+                            course.enrolled ? "btn-danger" : "btn-success"
+                          } float-end`}
+                        >
+                          {course.enrolled ? "Unenroll" : "Enroll"}
+                        </button>
+                      )}
+
                       {course.name}
                     </h5>
                     <p
@@ -239,15 +180,20 @@ export default function Dashboard({
                       {course.description}
                     </p>
 
-                    {currentUser?.role === "FACULTY" ? (
-                      <>
-                        <button className="btn btn-primary">Go</button>
+                    {currentUser?.role === "FACULTY" && (
+                      <div className="btn-group w-100">
+                        <Link
+                          to={`/Kanbas/Courses/${course._id}/Home`}
+                          className="btn btn-primary"
+                        >
+                          Go
+                        </Link>
                         <button
                           onClick={(event) => {
-                            event.preventDefault();
+                            event.stopPropagation();
                             deleteCourse(course._id);
                           }}
-                          className="btn btn-danger float-end"
+                          className="btn btn-danger"
                           id="wd-delete-course-click"
                         >
                           Delete
@@ -255,42 +201,14 @@ export default function Dashboard({
                         <button
                           id="wd-edit-course-click"
                           onClick={(event) => {
-                            event.preventDefault();
+                            event.stopPropagation();
                             setCourse(course);
                           }}
-                          className="btn btn-warning me-2 float-end"
+                          className="btn btn-warning"
                         >
                           Edit
                         </button>
-                      </>
-                    ) : (
-                      <>
-                        {isEnrolled(course._id) && (
-                          <button className="btn btn-primary">Go</button>
-                        )}
-                        <button
-                          className={`btn ${
-                            isEnrolled(course._id)
-                              ? "btn-danger"
-                              : "btn-success"
-                          } float-end`}
-                          onClick={(e) => handleEnrollmentToggle(course._id, e)}
-                          disabled={localLoading[course._id]}
-                        >
-                          {localLoading[course._id] ? (
-                            <>
-                              <span className="spinner-border spinner-border-sm me-2" />
-                              {isEnrolled(course._id)
-                                ? "Unenrolling..."
-                                : "Enrolling..."}
-                            </>
-                          ) : isEnrolled(course._id) ? (
-                            "Unenroll"
-                          ) : (
-                            "Enroll"
-                          )}
-                        </button>
-                      </>
+                      </div>
                     )}
                   </div>
                 </Link>
