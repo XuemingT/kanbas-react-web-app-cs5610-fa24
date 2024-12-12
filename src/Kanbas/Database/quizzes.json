@@ -196,5 +196,57 @@
         "answer": "Insulate against extreme temperatures"
       }
     ]
+  },
+  {
+    "_id": "Q101",
+    "title": "Introduction to course 2",
+    "description": "A basic quiz covering fundamental concepts in biology.",
+    "course": "RS102",
+    "quizStatus": true,
+    "quizType": "Graded Quiz",
+    "points": 100,
+    "assignmentGroup": "Quizzes",
+    "shuffleAnswers": true,
+    "timeLimit": 20,
+    "multipleAttempts": false,
+    "howManyAttempts": 2,
+    "showCorrectAnswers": "After Submission",
+    "accessCode": "",
+    "oneQuestionAtATime": true,
+    "webcamRequired": false,
+    "lockQuestionsAfterAnswering": false,
+    "dueDate": "2025-12-29T13:00:00Z",
+    "availableDate": "2024-08-13T22:00:00Z",
+    "untilDate": "2024-12-15T00:00:00Z",
+    "questions": [
+      {
+        "_id": "Q1011",
+        "question": "What is the powerhouse of the cell?",
+        "options": [
+          "Nucleus",
+          "Mitochondria",
+          "Ribosome",
+          "Endoplasmic Reticulum"
+        ],
+        "answer": "Mitochondria"
+      },
+      {
+        "_id": "Q1012",
+        "question": "Which molecule carries genetic information?",
+        "options": ["DNA", "RNA", "Proteins", "Lipids"],
+        "answer": "DNA"
+      },
+      {
+        "_id": "Q1013",
+        "question": "What process do plants use to convert sunlight into chemical energy?",
+        "options": [
+          "Respiration",
+          "Photosynthesis",
+          "Transpiration",
+          "Fermentation"
+        ],
+        "answer": "Photosynthesis"
+      }
+    ]
   }
 ]
