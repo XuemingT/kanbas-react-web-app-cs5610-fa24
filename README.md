@@ -1,6 +1,6 @@
-# 🧠 Kanbas LMS Clone
+# 🧠 Kanbas Learning Management System Clone
 
-A full-stack clone of Northeastern University's Kanbas learning management system, rebuilt with React, Node.js, Express, and MongoDB.
+A full-stack clone of Northeastern University's Canvas learning management system, rebuilt with React, Node.js, Express, and MongoDB.
 
 This project simulates core functionalities of a modern learning platform, including user authentication, quizzes, modules, course management, and user enrollment.
 
@@ -115,5 +115,5 @@ M.S. in Computer Science @ Northeastern University, Silicon Valley
 
 ## 📬 Contact
 
-- GitHub: [yourusername](https://github.com/yourusername)
+- GitHub: [yourusername](https://github.com/XuemingT)
 - Email: xueming.email@example.com
