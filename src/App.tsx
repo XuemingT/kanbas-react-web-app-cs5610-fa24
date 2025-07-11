@@ -13,7 +13,10 @@ export default function App() {
           <Routes>
             {" "}
             {/* <Route path="/" element={<Navigate to="Kanbas" />} /> */}
-            <Route path="/" element={<Navigate to="Landing" />} />
+            <Route
+              path="/"
+              element={<Navigate to="/Kanbas/Account/Signin" />}
+            />
             <Route path="/Landing" element={<Landing />} />
             <Route path="/Labs/*" element={<Labs />} />
             <Route path="/Kanbas/*" element={<Kanbas />} />

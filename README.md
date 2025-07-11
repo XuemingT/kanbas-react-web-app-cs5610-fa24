@@ -1,46 +1,119 @@
-# Getting Started with Create React App
+# 🧠 Kanbas LMS Clone
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack clone of Northeastern University's Kanbas learning management system, rebuilt with React, Node.js, Express, and MongoDB.
 
-## Available Scripts
+This project simulates core functionalities of a modern learning platform, including user authentication, quizzes, modules, course management, and user enrollment.
 
-In the project directory, you can run:
+![Login Page](./screenshots/signin.png)
+![Quizzes Page](./screenshots/quizzes.png)
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 🚀 Features
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- 🔐 Account Sign In / Sign Up
+- 🎓 Dashboard with course navigation
+- 📚 Modules and content display
+- 📝 Quiz management and question listing
+- 👥 User enrollment & profile
+- 💾 MongoDB for persistent storage
+- 🔄 Session handling via express-session
+- 🌐 Frontend-backend CORS integration
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🛠 Tech Stack
 
-### `npm run build`
+| Layer    | Technology                |
+| -------- | ------------------------- |
+| Frontend | React, React Router DOM   |
+| Backend  | Node.js, Express.js       |
+| Database | MongoDB (local or Atlas)  |
+| State    | Redux                     |
+| Auth     | express-session + cookies |
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 💻 Getting Started
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 1. Clone the repo
 
-### `npm run eject`
+```bash
+git clone https://github.com/yourusername/kanbas-clone.git
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 2. Install and run backend
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+cd kanbas-node-server-app
+npm install
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Backend will run at: `http://localhost:4000`
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### 3. Install and run frontend
 
-## Learn More
+```bash
+cd ../kanbas-react-web-app-fa24
+npm install
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Frontend will run at: `http://localhost:3000`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
+
+## 🌍 Live Demo (Optional)
+
+_TODO: Add Netlify + Render deployment links if available._
+
+---
+
+## 📸 Screenshots
+
+### ✅ Sign In Page
+
+![Sign In](./screenshots/signin.png)
+
+### 📋 Quizzes Page
+
+![Quizzes](./screenshots/quizzes.png)
+
+---
+
+## 📁 Project Structure
+
+```
+kanbas-clone/
+├── kanbas-node-server-app/      # Backend: Express + Mongoose
+├── kanbas-react-web-app-fa24/   # Frontend: React + Redux
+├── screenshots/                 # Static assets for README
+│   ├── signin.png
+│   └── quizzes.png
+├── README.md
+```
+
+---
+
+## 👩‍💻 Author
+
+**Xueming Tang**  
+M.S. in Computer Science @ Northeastern University, Silicon Valley  
+📍 San Jose, CA
+
+---
+
+## ✨ Future Improvements
+
+- Admin dashboard with course management
+- Assignment grading interface
+- Real-time messaging with WebSocket
+- Deployment to Netlify + MongoDB Atlas
+
+---
+
+## 📬 Contact
+
+- GitHub: [yourusername](https://github.com/yourusername)
+- Email: xueming.email@example.com
