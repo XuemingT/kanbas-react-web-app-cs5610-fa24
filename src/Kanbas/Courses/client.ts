@@ -1,20 +1,19 @@
-import axios from "axios";
-const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER || ""; 
+import { api, REMOTE_SERVER } from "../../api";
 const COURSES_API = `${REMOTE_SERVER}/api/courses`;
 export const fetchAllCourses = async () => {
-  const { data } = await axios.get(COURSES_API);
+  const { data } = await api.get(COURSES_API);
   return data;
 };
 export const deleteCourse = async (id: string) => {
-  const { data } = await axios.delete(`${COURSES_API}/${id}`);
+  const { data } = await api.delete(`${COURSES_API}/${id}`);
   return data;
 };
 export const updateCourse = async (course: any) => {
-  const { data } = await axios.put(`${COURSES_API}/${course._id}`, course);
+  const { data } = await api.put(`${COURSES_API}/${course._id}`, course);
   return data;
 };
 export const createModuleForCourse = async (courseId: string, module: any) => {
-  const response = await axios.post(
+  const response = await api.post(
     `${COURSES_API}/${courseId}/modules`,
     module
   );
@@ -22,6 +21,6 @@ export const createModuleForCourse = async (courseId: string, module: any) => {
 };
 
 export const findModulesForCourse = async (courseId: string) => {
-  const response = await axios.get(`${COURSES_API}/${courseId}/modules`);
+  const response = await api.get(`${COURSES_API}/${courseId}/modules`);
   return response.data;
 };
