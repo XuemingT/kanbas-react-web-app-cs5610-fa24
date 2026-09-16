@@ -1,107 +1,39 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { setCurrentUser } from "./reducer";
-import * as client from "./client";
+import { signout } from "../teamflowClient";
+
 export default function Profile() {
-  const [profile, setProfile] = useState<any>({});
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const updateProfile = async () => {
-    const updatedProfile = await client.updateUser(profile);
-    dispatch(setCurrentUser(updatedProfile));
-  };
-
-  const fetchProfile = () => {
-    if (!currentUser) return navigate("/Kanbas/Account/Signin");
-    setProfile(currentUser);
-  };
-  const signout = async () => {
-    await client.signout();
+  const initials = `${currentUser?.firstName?.[0] || ""}${currentUser?.lastName?.[0] || ""}`.toUpperCase() || "TF";
+  const name = [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(" ") || "Workspace member";
+  const leaveWorkspace = async () => {
+    await signout();
     dispatch(setCurrentUser(null));
     navigate("/Kanbas/Account/Signin");
   };
-  useEffect(() => {
-    fetchProfile();
-  }, []);
   return (
-    <div className="wd-profile-screen">
-      <h3>Profile</h3>
-      {profile && (
-        <div>
-          <input
-            defaultValue={profile.username}
-            id="wd-username"
-            className="form-control mb-2"
-            onChange={(e) =>
-              setProfile({ ...profile, username: e.target.value })
-            }
-          />
-          <input
-            defaultValue={profile.password}
-            id="wd-password"
-            className="form-control mb-2"
-            onChange={(e) =>
-              setProfile({ ...profile, password: e.target.value })
-            }
-          />
-          <input
-            defaultValue={profile.firstName}
-            id="wd-firstname"
-            className="form-control mb-2"
-            onChange={(e) =>
-              setProfile({ ...profile, firstName: e.target.value })
-            }
-          />
-          <input
-            defaultValue={profile.lastName}
-            id="wd-lastname"
-            className="form-control mb-2"
-            onChange={(e) =>
-              setProfile({ ...profile, lastName: e.target.value })
-            }
-          />
-          <input
-            defaultValue={profile.dob}
-            id="wd-dob"
-            className="form-control mb-2"
-            onChange={(e) => setProfile({ ...profile, dob: e.target.value })}
-            type="date"
-          />
-          <input
-            defaultValue={profile.email}
-            id="wd-email"
-            className="form-control mb-2"
-            onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-          />
-          <select
-            onChange={(e) => setProfile({ ...profile, role: e.target.value })}
-            className="form-control mb-2"
-            id="wd-role"
-          >
-            <option value="USER">User</option>{" "}
-            <option value="ADMIN">Admin</option>
-            <option value="FACULTY">Faculty</option>{" "}
-            <option value="STUDENT">Student</option>
-          </select>
-          <button
-            onClick={updateProfile}
-            className="btn btn-primary w-100 mb-2"
-          >
-            {" "}
-            Update{" "}
-          </button>
-
-          <button
-            onClick={signout}
-            className="btn btn-danger w-100 mb-2"
-            id="wd-signout-btn"
-          >
-            Sign out
-          </button>
+    <main className="min-h-screen flex items-center justify-center p-6" style={{ background: "#F5F6FA" }}>
+      <section className="w-full max-w-lg bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #EAECF0", boxShadow: "0 12px 30px rgba(17,24,39,.08)" }}>
+        <div className="p-6" style={{ background: "#1A1D2E" }}>
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold mb-4" style={{ background: "#7C5CFC" }}>{initials}</div>
+          <p className="text-white text-[20px] font-bold">{name}</p>
+          <p className="text-[13px] mt-1" style={{ color: "#9CA3AF" }}>{currentUser?.role || "Member"} · TeamFlow workspace</p>
         </div>
-      )}
-    </div>
+        <div className="p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-widest mb-3" style={{ color: "#9CA3AF" }}>Account</p>
+          <dl className="space-y-3 text-[13px]">
+            <div className="flex justify-between gap-6"><dt style={{ color: "#6B7280" }}>Username</dt><dd className="font-medium text-[#111827]">{currentUser?.username}</dd></div>
+            <div className="flex justify-between gap-6"><dt style={{ color: "#6B7280" }}>Email</dt><dd className="font-medium text-[#111827]">{currentUser?.email}</dd></div>
+          </dl>
+          <div className="flex gap-3 mt-7">
+            <button onClick={() => navigate("/Kanbas/Dashboard")} className="flex-1 rounded-xl py-2.5 text-white text-[13px] font-semibold" style={{ background: "#7C5CFC" }}>Back to workspace</button>
+            <button onClick={leaveWorkspace} className="flex-1 rounded-xl py-2.5 text-[13px] font-semibold" style={{ border: "1px solid #EAECF0", color: "#374151" }}>Sign out</button>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

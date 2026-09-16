@@ -1,4 +1,3 @@
-import { courses } from "../Database";
 import { FaAlignJustify } from "react-icons/fa6";
 import CoursesNavigation from "./Navigation";
 import Modules from "./Modules";
@@ -17,7 +16,7 @@ export default function Courses({ courses }: { courses: any[] }) {
     <div id="wd-courses">
       <h2 className="text-danger">
         <FaAlignJustify className="me-4 fs-4 mb-1" />
-        {course && course.name} &gt; {pathname.split("/")[4]}
+        {course && course.name} <span className="text-muted fs-5">/ {pathname.split("/")[4] === "Home" ? "Overview" : pathname.split("/")[4]}</span>
       </h2>
 
       <hr />

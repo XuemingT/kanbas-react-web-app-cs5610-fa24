@@ -6,14 +6,10 @@ export default function CoursesNavigation() {
   const location = useLocation();
 
   const links = [
-    "Home",
-    "Modules",
-    "Piazza",
-    "Zoom",
-    "Assignments",
-    "Quizzes",
-    "Grades",
-    "People",
+    { label: "Overview", route: "Home" },
+    { label: "Workstreams", route: "Modules" },
+    { label: "Tasks", route: "Assignments" },
+    { label: "Team", route: "People" },
   ];
 
   return (
@@ -21,15 +17,15 @@ export default function CoursesNavigation() {
       className="wd list-group rounded-0 d-none d-md-block"
       id="wd-courses-navigation"
     >
-      {links.map((link) => (
+      {links.map(({ label, route }) => (
         <Link
-          key={link}
+          key={route}
           className={`list-group-item border-0 ${
-            location.pathname.includes(link) ? "active" : "text-danger"
+            location.pathname.includes(route) ? "active" : "text-danger"
           }`}
-          to={`/Kanbas/Courses/${cid}/${link}`}
+          to={`/Kanbas/Courses/${cid}/${route}`}
         >
-          {link}
+          {label}
         </Link>
       ))}
     </div>

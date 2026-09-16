@@ -1,53 +1,15 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { setCurrentUser } from "./reducer";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import * as client from "./client";
+import { setCurrentUser } from "./reducer";
+import * as client from "../teamflowClient";
+
+function Mark() { return <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-[#1A1D2E]"><svg width="27" height="27" viewBox="0 0 27 27" fill="none"><circle cx="7" cy="7" r="4" fill="#FF6B9D"/><circle cx="20" cy="7" r="4" fill="#38BDF8"/><circle cx="13.5" cy="20" r="4.4" fill="#A855F7"/><path d="M9.8 9.7l2.2 6.1M17.2 9.7l-2.2 6.1M10.6 7.5h5.8" stroke="white" strokeOpacity=".7" strokeWidth="1.2" strokeLinecap="round"/></svg></div>; }
 
 export default function Signin() {
-  const [credentials, setCredentials] = useState<any>({});
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const signin = async () => {
-    const user = await client.signin(credentials);
-    if (!user) return;
-    dispatch(setCurrentUser(user));
-    navigate("/Kanbas/Dashboard");
-  };
-  return (
-    <div id="wd-signin-screen">
-      <h1>Sign in</h1>
-      <input
-        defaultValue={credentials.username}
-        onChange={(e) =>
-          setCredentials({ ...credentials, username: e.target.value })
-        }
-        className="form-control mb-2"
-        placeholder="username"
-        id="wd-username"
-      />
-      <input
-        defaultValue={credentials.password}
-        onChange={(e) =>
-          setCredentials({ ...credentials, password: e.target.value })
-        }
-        className="form-control mb-2"
-        placeholder="password"
-        type="password"
-        id="wd-password"
-      />
-      <button
-        onClick={signin}
-        id="wd-signin-btn"
-        className="btn btn-primary w-100"
-      >
-        {" "}
-        Sign in{" "}
-      </button>
-      <Link id="wd-signup-link" to="/Kanbas/Account/Signup">
-        {" "}
-        Sign up{" "}
-      </Link>
-    </div>
-  );
+  const [credentials, setCredentials] = useState({ username: "demo.manager", password: "Demo!2026" });
+  const [error, setError] = useState(""); const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch(); const navigate = useNavigate();
+  const signin = async () => { try { setLoading(true); setError(""); const user = await client.signin(credentials); dispatch(setCurrentUser(user)); navigate("/Kanbas/Dashboard"); } catch { setError("We could not sign you in. Check the credentials and try again."); } finally { setLoading(false); } };
+  return <main className="min-h-screen grid lg:grid-cols-[1fr_1.05fr] bg-white"><section className="hidden lg:flex relative overflow-hidden p-14 flex-col justify-between text-white bg-[#1A1D2E]"><div className="flex items-center gap-3"><Mark/><div><p className="text-[17px] font-bold leading-tight">TeamFlow</p><p className="text-[11px] text-[#8B909E]">Workspace Platform</p></div></div><div className="relative z-10 max-w-md"><span className="inline-flex rounded-full px-3 py-1 text-[11px] font-semibold bg-white/10 text-[#C4B5FD]">COLLABORATE WITH CLARITY</span><h1 className="mt-5 text-[42px] leading-[1.08] tracking-tight font-bold">Work moves faster when everyone is in sync.</h1><p className="mt-5 text-[15px] leading-relaxed text-[#B7BDCC]">Plan projects, keep tasks moving, and make decisions together in one focused workspace.</p></div><div/><div className="absolute -right-28 -top-20 h-96 w-96 rounded-full bg-[#7C5CFC]/20 blur-3xl"/><div className="absolute -left-20 bottom-16 h-64 w-64 rounded-full bg-[#38BDF8]/10 blur-3xl"/></section><section className="flex min-h-screen items-center justify-center p-6 sm:p-10 bg-[#F8F9FB]"><div className="w-full max-w-[410px]"><div className="lg:hidden flex items-center gap-3 mb-12"><Mark/><div><p className="text-[17px] font-bold text-[#111827]">TeamFlow</p><p className="text-[11px] text-[#9CA3AF]">Workspace Platform</p></div></div><p className="text-[11px] font-semibold tracking-[.14em] text-[#7C5CFC]">WELCOME BACK</p><h2 className="mt-3 text-[29px] tracking-tight font-bold text-[#111827]">Sign in to TeamFlow</h2><p className="mt-2 text-[13.5px] leading-relaxed text-[#6B7280]">Use the demo account to explore a workspace with real projects, teammates, and activity.</p><form onSubmit={(event) => { event.preventDefault(); signin(); }} className="mt-8 space-y-4"><div><label htmlFor="wd-username" className="block mb-1.5 text-[12px] font-semibold text-[#374151]">Username</label><input id="wd-username" value={credentials.username} onChange={(event) => setCredentials({ ...credentials, username: event.target.value })} autoComplete="username" className="w-full rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-3 text-[13.5px] outline-none focus:border-[#7C5CFC] focus:ring-4 focus:ring-[#7C5CFC]/10" /></div><div><label htmlFor="wd-password" className="block mb-1.5 text-[12px] font-semibold text-[#374151]">Password</label><input id="wd-password" value={credentials.password} onChange={(event) => setCredentials({ ...credentials, password: event.target.value })} type="password" autoComplete="current-password" className="w-full rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-3 text-[13.5px] outline-none focus:border-[#7C5CFC] focus:ring-4 focus:ring-[#7C5CFC]/10" /></div><button id="wd-signin-btn" disabled={loading} className="w-full rounded-xl bg-[#7C5CFC] py-3 text-[13.5px] font-semibold text-white shadow-[0_8px_18px_rgba(124,92,252,.24)] transition hover:bg-[#6847EB] disabled:opacity-60">{loading ? "Signing in…" : "Sign in"}</button></form>{error && <p role="alert" className="mt-4 rounded-xl bg-red-50 px-3 py-2.5 text-[12px] text-red-700">{error}</p>}<div className="mt-6 rounded-xl border border-[#E8E4FF] bg-[#F7F5FF] p-3.5"><p className="text-[11px] font-semibold text-[#6545E8]">DEMO ACCESS</p><p className="mt-1 text-[12.5px] text-[#4B5563]"><span className="font-medium">Username: demo.manager</span> &nbsp;·&nbsp; <span className="font-medium">Password: Demo!2026</span></p></div><p className="mt-6 text-center text-[11.5px] text-[#9CA3AF]">For portfolio review and demonstration purposes.</p></div></section></main>;
 }
