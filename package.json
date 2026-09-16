@@ -32,6 +32,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "server:start": "npm --prefix server start",
+    "server:dev": "npm --prefix server run dev",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

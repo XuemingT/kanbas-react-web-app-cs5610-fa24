@@ -18,7 +18,7 @@ React, TypeScript, Tailwind CSS, Express, Socket.IO, MongoDB Atlas, and Mongoose
 
 ## Local setup
 
-Start the companion [TeamFlow API](https://github.com/XuemingT/teamflow-api) first, with `MONGO_URL`, `SESSION_SECRET`, and `USE_MONGO=true` configured. Then run this frontend:
+Install and run the React client locally:
 
 ```bash
 npm install
@@ -27,12 +27,20 @@ npm start
 
 Demo account: `demo.manager` / `Demo!2026`
 
-## Environment variables
-
-For a separate frontend deployment, configure the API URL at build time:
+To run the full monorepo locally, configure `server/.env` as described in [server/README.md](server/README.md), then use a second terminal:
 
 ```bash
-REACT_APP_REMOTE_SERVER=https://your-api-host
+npm --prefix server install
+npm run server:dev
 ```
 
-For local development, the CRA proxy targets `http://localhost:4000` automatically.
+## Deployment
+
+This repository deploys as one Koyeb Web Service. Koyeb builds the React app, and the Express server serves the resulting `build/` directory, `/api`, and Socket.IO from the same domain.
+
+```bash
+Build command: npm ci && npm --prefix server install && npm run build
+Run command: npm run server:start
+```
+
+Set the server environment variables `NODE_ENV=production`, `USE_MONGO=true`, `MONGO_URL`, and `SESSION_SECRET`. No `REACT_APP_REMOTE_SERVER` or cross-origin `CLIENT_ORIGIN` setting is required for this same-origin deployment.
