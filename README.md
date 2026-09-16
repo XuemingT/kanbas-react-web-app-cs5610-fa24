@@ -36,11 +36,12 @@ npm run server:dev
 
 ## Deployment
 
-This repository deploys as one Koyeb Web Service. Koyeb builds the React app, and the Express server serves the resulting `build/` directory, `/api`, and Socket.IO from the same domain.
+This repository deploys as one Google Compute Engine VM. Express serves the resulting `build/` directory, `/api`, and Socket.IO from the same domain; Caddy provides HTTPS and reverse-proxies requests to the Node process.
 
 ```bash
-Build command: npm ci && npm --prefix server install && npm run build
-Run command: npm run server:start
+Build the application on the VM:
+
+npm ci && npm --prefix server ci && npm run build
 ```
 
-Set the server environment variables `NODE_ENV=production`, `USE_MONGO=true`, `MONGO_URL`, and `SESSION_SECRET`. No `REACT_APP_REMOTE_SERVER` or cross-origin `CLIENT_ORIGIN` setting is required for this same-origin deployment.
+Create `server/.env` on the VM with `NODE_ENV=production`, `USE_MONGO=true`, `MONGO_URL`, and `SESSION_SECRET`, then run `server/index.js` with PM2. No `REACT_APP_REMOTE_SERVER` or cross-origin `CLIENT_ORIGIN` setting is required for this same-origin deployment.
