@@ -1,23 +1,24 @@
-# TeamFlow
+# TeamFlow Workspace
 
-TeamFlow is a full-stack team workspace demo for projects, tasks, calendars, team chat, and meeting invitations.
+TeamFlow is a full-stack collaboration workspace for teams to plan projects, manage tasks, schedule meetings, and communicate in real time.
 
-## Highlights
+## Features
 
-- Session-based demo authentication with MongoDB Atlas
-- Project and task management with persistent completion state
+- Session-based authentication backed by MongoDB Atlas
+- Project lifecycle management: active, completed, and archived projects
+- Task management with persistent completion state and automatic project progress
 - Team-scoped People directory, direct messages, and group channels
 - Real-time Socket.IO chat
 - Meeting invitation workflow: invite, accept/decline, Calendar update, notification
 - Responsive Figma-inspired workspace UI and first-run onboarding tour
 
-## Stack
+## Tech stack
 
 React, TypeScript, Tailwind CSS, Express, Socket.IO, MongoDB Atlas, and Mongoose.
 
 ## Local setup
 
-Start the companion Node server first, with `MONGO_URL`, `SESSION_SECRET`, and `USE_MONGO=true` configured. Then run this frontend:
+Start the companion [TeamFlow API](https://github.com/XuemingT/teamflow-api) first, with `MONGO_URL`, `SESSION_SECRET`, and `USE_MONGO=true` configured. Then run this frontend:
 
 ```bash
 npm install
@@ -26,6 +27,12 @@ npm start
 
 Demo account: `demo.manager` / `Demo!2026`
 
-## Deployment
+## Environment variables
 
-Deploy the frontend as a static site and the Express/Socket.IO server as an always-on web service. Configure `REACT_APP_REMOTE_SERVER` to the deployed API URL and set the server `CLIENT_ORIGIN` to the frontend URL.
+For a separate frontend deployment, configure the API URL at build time:
+
+```bash
+REACT_APP_REMOTE_SERVER=https://your-api-host
+```
+
+For local development, the CRA proxy targets `http://localhost:4000` automatically.
